@@ -1,9 +1,0 @@
-{
-  "name": "bufs-startup-idea-builder-ai-netlify",
-  "version": "2.0.0",
-  "private": true,
-  "scripts": {
-    "start": "netlify dev"
-  },
-  "dependencies": {}
-}
