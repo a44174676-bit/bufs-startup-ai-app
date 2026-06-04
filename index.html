@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BUFS Startup Idea Builder</title>
+  <meta name="description" content="부산외대 학생을 위한 외국어·관광·AI 창업 아이디어 생성 웹앱 MVP" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip" href="#builder">본문 바로가기</a>
+
+  <header class="hero">
+    <nav class="nav" aria-label="상단 메뉴">
+      <div class="brand">
+        <span class="brand-mark">B</span>
+        <span>BUFS Startup Idea Builder</span>
+      </div>
+      <button class="ghost-btn" id="resetBtn" type="button">새로 시작</button>
+    </nav>
+
+    <section class="hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">외국어는 시험 과목이 아니라 창업 자산입니다</p>
+        <h1>불편 하나를<br />AI 서비스 아이디어로 바꾸는 앱</h1>
+        <p class="lead">
+          외국인 유학생, 의료관광객, 부산 방문 관광객이 겪는 불편을 입력하면
+          학생이 만들 수 있는 MVP, 발표 문장, 권리화 방향까지 한 번에 정리합니다.
+        </p>
+        <div class="hero-actions">
+          <a href="#builder" class="primary-link">아이디어 만들기</a>
+          <a href="#case" class="secondary-link">Medi Hana 사례 보기</a>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-label="아이디어가 앱과 보호 자산으로 발전하는 흐름">
+        <div class="orb orb-1">💡</div>
+        <div class="flow-line"></div>
+        <div class="phone-card">
+          <span class="phone-dot"></span>
+          <div class="app-row"></div>
+          <div class="app-row short"></div>
+          <div class="app-grid">
+            <span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="flow-line right"></div>
+        <div class="shield-card">🛡️<small>상표·특허<br />신뢰 자산</small></div>
+      </div>
+    </section>
+  </header>
+
+  <main>
+    <section class="message-panel" aria-labelledby="message-title">
+      <div>
+        <p class="section-kicker">대표님의 강연 메시지</p>
+        <h2 id="message-title">창업은 상금을 받기 위한 발표가 아닙니다</h2>
+      </div>
+      <p>
+        창업은 누군가의 불편을 발견하고, 그것을 고객이 믿을 수 있는 구조로 바꾸는 과정입니다.
+        이 앱은 그 과정을 학생들이 직접 따라 해 볼 수 있도록 만든 첫 번째 MVP입니다.
+      </p>
+    </section>
+
+    <section class="steps" aria-labelledby="steps-title">
+      <p class="section-kicker">4단계 사고법</p>
+      <h2 id="steps-title">불편 → 작은 서비스 → 이름 → 보호</h2>
+      <div class="step-grid">
+        <article><strong>1</strong><h3>불편 찾기</h3><p>외국인 친구가 학교·병원·식당·교통에서 막히는 순간을 찾습니다.</p></article>
+        <article><strong>2</strong><h3>작게 만들기</h3><p>완벽한 앱보다 구글폼, 노코드 페이지, 챗봇으로 먼저 실험합니다.</p></article>
+        <article><strong>3</strong><h3>이름 붙이기</h3><p>서비스가 기억되도록 쉬운 이름과 한 줄 설명을 만듭니다.</p></article>
+        <article><strong>4</strong><h3>권리 생각하기</h3><p>이름은 상표, 글과 영상은 저작권, 구조와 흐름은 특허 후보가 됩니다.</p></article>
+      </div>
+    </section>
+
+    <section id="builder" class="builder" aria-labelledby="builder-title">
+      <div class="builder-head">
+        <div>
+          <p class="section-kicker">Idea Builder</p>
+          <h2 id="builder-title">학생 창업 아이디어 생성기</h2>
+          <p>아래 항목을 고르면 발표용 아이디어 초안이 자동으로 만들어집니다.</p>
+        </div>
+        <div class="mini-badge">노코드 MVP 버전</div>
+      </div>
+
+      <div class="builder-layout">
+        <form class="card form-card" id="ideaForm">
+          <label>
+            누구의 불편인가요?
+            <select id="target">
+              <option value="foreignStudent">외국인 유학생</option>
+              <option value="medicalTourist">외국인 의료관광객</option>
+              <option value="busanTourist">부산 방문 외국인 관광객</option>
+              <option value="kBeautyCustomer">K-뷰티 관심 고객</option>
+              <option value="hospitalVisitor">외국인 병원 방문자</option>
+            </select>
+          </label>
+
+          <label>
+            어떤 불편을 해결하고 싶나요?
+            <textarea id="problem" rows="4" placeholder="예: 한국에 처음 온 유학생이 기숙사, 은행, 병원, 버스 이용을 어려워한다."></textarea>
+          </label>
+
+          <label>
+            학생 팀이 가진 강점은 무엇인가요?
+            <select id="strength">
+              <option value="language">외국어·번역</option>
+              <option value="content">영상·SNS 콘텐츠</option>
+              <option value="tourism">관광 코스 기획</option>
+              <option value="ai">AI 챗봇·노코드</option>
+              <option value="beauty">K-뷰티 관심·제품 이해</option>
+            </select>
+          </label>
+
+          <label>
+            첫 MVP는 무엇으로 만들까요?
+            <select id="tool">
+              <option value="chatbot">AI 챗봇</option>
+              <option value="webapp">간단한 웹앱</option>
+              <option value="form">구글폼 + 자동 안내문</option>
+              <option value="map">지도 기반 안내 페이지</option>
+              <option value="cards">다국어 문장카드</option>
+            </select>
+          </label>
+
+          <div class="button-row">
+            <button type="submit" class="primary-btn">아이디어 생성</button>
+            <button type="button" class="secondary-btn" id="copyBtn">결과 복사</button>
+          </div>
+        </form>
+
+        <section class="card result-card" aria-live="polite" aria-labelledby="result-title">
+          <div class="result-top">
+            <span class="pill">생성 결과</span>
+            <h3 id="result-title">발표용 아이디어 초안</h3>
+          </div>
+          <div id="resultBox" class="result-box">
+            <p class="empty">왼쪽에서 항목을 선택하고 “아이디어 생성”을 눌러보세요.</p>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="recommend" aria-labelledby="recommend-title">
+      <p class="section-kicker">학생에게 바로 추천할 TOP 5</p>
+      <h2 id="recommend-title">하드웨어보다 웹서비스·챗봇·다국어 콘텐츠부터</h2>
+      <div class="idea-cards" id="templateCards"></div>
+    </section>
+
+    <section id="case" class="case" aria-labelledby="case-title">
+      <div class="case-copy">
+        <p class="section-kicker">Medi Hana 사례</p>
+        <h2 id="case-title">병원 방문 전후 빈 시간을 체류 경험으로 바꾸다</h2>
+        <p>
+          Medi Hana Care Route AI는 외국인 의료관광객이 병원 방문 전후에 무리 없이 머물 수 있도록
+          지역, 동반자, 이동 제약, 언어를 분석하고 관광데이터와 생성형 AI를 조합해 짧은 체류동선을 안내하는 사례입니다.
+        </p>
+        <ul>
+          <li>병원 추천·진단·치료효과·가격 보장이 아닙니다.</li>
+          <li>병원 방문 전후 관광·휴식·체류동선 안내로 범위를 한정합니다.</li>
+          <li>Care Route AI 체험 후 신뢰를 형성하고 상담 접수로 연결합니다.</li>
+        </ul>
+      </div>
+      <div class="case-flow">
+        <div>고객 질문<br /><small>지역·목적·동반자</small></div>
+        <span>→</span>
+        <div>AI 상황 분석<br /><small>언어·이동 제약</small></div>
+        <span>→</span>
+        <div>데이터 조회<br /><small>관광·웰니스·무장애</small></div>
+        <span>→</span>
+        <div>체류동선<br /><small>사진·지도·주의사항</small></div>
+      </div>
+    </section>
+
+    <section class="rights" aria-labelledby="rights-title">
+      <p class="section-kicker">아이디어 보호법</p>
+      <h2 id="rights-title">무조건 특허가 아니라, 보호할 대상을 나눠야 합니다</h2>
+      <div class="rights-grid">
+        <article><span>🏷️</span><h3>상표</h3><p>서비스 이름과 브랜드를 지킵니다.</p></article>
+        <article><span>📝</span><h3>저작권</h3><p>글, 영상, 번역문, 안내 콘텐츠를 지킵니다.</p></article>
+        <article><span>🎨</span><h3>디자인</h3><p>앱 화면이나 제품 외관을 지킵니다.</p></article>
+        <article><span>🔧</span><h3>실용신안</h3><p>장치의 구조 개선 아이디어를 지킵니다.</p></article>
+        <article><span>⚙️</span><h3>특허</h3><p>AI가 분석하고 연결하는 기술 흐름을 지킵니다.</p></article>
+        <article><span>🔒</span><h3>영업비밀</h3><p>고객 DB, 정산 방식, 파트너 조건을 내부에서 보호합니다.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>VR MEDI TOUR & HOME · 부산외대 창업동아리 강연용 MVP</p>
+    <p class="footer-note">이 웹앱은 발표·교육용 예시이며 의료 판단, 법률 자문, 투자 권유를 제공하지 않습니다.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
