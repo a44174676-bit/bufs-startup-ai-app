@@ -1,38 +1,46 @@
-# BUFS Startup Idea Builder AI - character multilingual fixed version
+# BUFS Startup Bridge AI v2
 
-언어 캐릭터 버튼과 6개 언어 전체 번역이 반영된 Netlify 배포본입니다.
+부산외국어대학교 창업지원단에서 실제로 사용할 수 있는 형태를 목표로 한 학생창업 아이디어 접수·진단 MVP입니다.
 
-## 포함 언어
-- KO 한국어
-- EN English
-- VI Tiếng Việt
-- JP 日本語
-- CN 中文
-- AR العربية
+## v2 핵심 변화
+
+- 의료관광 중심 제거: 전체 학생창업 분야로 확장
+- 10개 창업 분야 지원
+- 한 문제에서 5개 창업 아이디어 도출
+- 각 아이디어별 점수, 난이도, MVP, 수익모델, 권리화 방향 제시
+- 선택 아이디어 상세 분석
+- 메일 제출, PDF/인쇄, 아이디어 링크 생성 기능
+- 한국어·영어·베트남어·일본어·중국어·아랍어 다국어 UI
 
 ## 파일 구조
+
 ```txt
 index.html
 styles.css
 app.js
-assets/bufs-logo.jpg
-assets/lang-ko.png
-assets/lang-en.png
-assets/lang-vi.png
-assets/lang-ja.png
-assets/lang-zh.png
-assets/lang-ar.png
+assets/
+  bufs-logo.jpg
+  lang-ko.png
+  lang-en.png
+  lang-vi.png
+  lang-ja.png
+  lang-zh.png
+  lang-ar.png
 netlify.toml
-netlify/functions/generate-idea.js
+netlify/functions/generate-ideas.js
 package.json
 README.md
 ```
 
 ## Netlify 환경변수
-- OPENAI_API_KEY
-- OPENAI_MODEL = gpt-4.1-mini
 
+Netlify Site configuration > Environment variables에 아래 값을 추가하세요.
 
-## 담당자 메일 전송 버튼
+- `OPENAI_API_KEY`: OpenAI API 키
+- `OPENAI_MODEL`: `gpt-4.1-mini` 권장
 
-AI 결과가 생성된 후 `담당자 메일로 보내기` 버튼을 누르면 결과 전체를 클립보드에 복사하고, `hotissue0@bufs.ac.kr` 주소가 입력된 메일 작성창을 엽니다. 브라우저 보안상 사용자의 확인 없이 자동 발송하지 않으며, 사용자가 메일 내용을 확인한 뒤 발송합니다.
+API 키는 GitHub 코드에 절대 넣지 마세요.
+
+## 운영 주의
+
+정식 운영 전에는 개인정보처리방침, 학생 아이디어 권리 귀속 동의, 관리자 검토 절차, 접수 데이터 저장소(Supabase 등)를 추가하는 것이 좋습니다.

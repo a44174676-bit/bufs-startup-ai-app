@@ -3,219 +3,132 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BUFS Startup Idea Builder AI</title>
-  <meta name="description" content="부산외대 학생을 위한 외국어·관광·AI 창업 아이디어 코치" />
-  <meta property="og:title" content="BUFS Startup Idea Builder AI" />
-  <meta property="og:description" content="불편 하나를 학생 창업 아이디어와 MVP 계획으로 바꿔주는 AI 코치" />
+  <title>BUFS Startup Bridge AI v2</title>
+  <meta name="description" content="부산외대 창업지원단용 다국어 AI 학생창업 아이디어 접수·진단 플랫폼" />
+  <meta property="og:title" content="BUFS Startup Bridge AI v2" />
+  <meta property="og:description" content="학생 아이디어를 5개 창업 가능성, MVP, 점수, 권리화 방향으로 진단합니다." />
   <meta property="og:type" content="website" />
   <link rel="icon" href="assets/bufs-logo.jpg" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <a class="skip-link" href="#idea-builder">본문 바로가기</a>
+  <a class="skip-link" href="#intake" data-i18n="skip">본문 바로가기</a>
 
   <header class="site-header">
     <div class="top-bar">
-      <div class="brand-area" aria-label="BUFS Startup Idea Builder AI">
-        <img src="assets/bufs-logo.jpg" alt="BUFS 로고" class="logo" />
-        <div>
-          <strong>BUFS Startup Idea Builder AI</strong>
-          <span data-i18n="brandSub">부산외대 학생 창업 실습용 AI</span>
-        </div>
+      <div class="brand-area">
+        <img src="assets/bufs-logo.jpg" alt="BUFS" class="logo" />
+        <div><strong>BUFS Startup Bridge AI <span class="version">v2</span></strong><span data-i18n="brandSub">창업지원단용 학생창업 접수·진단 플랫폼</span></div>
       </div>
       <nav class="quick-nav" aria-label="빠른 이동">
-        <a href="#idea-builder" data-i18n="navMake">아이디어 만들기</a>
-        <a href="#why" data-i18n="navWhy">왜 필요한가요?</a>
-        <a href="#examples" data-i18n="navExamples">추천 아이템</a>
-        <a href="#rights" data-i18n="navRights">권리화</a>
+        <a href="#intake" data-i18n="navApply">아이디어 접수</a>
+        <a href="#flow" data-i18n="navFlow">운영 흐름</a>
+        <a href="#criteria" data-i18n="navCriteria">진단 기준</a>
       </nav>
     </div>
-
-    <section class="hero" aria-labelledby="hero-title">
+    <section class="hero">
       <div class="hero-copy">
-        <p class="eyebrow" data-i18n="eyebrow">외국어 · 관광 · AI · 다문화</p>
-        <h1 id="hero-title" data-i18n-html="heroTitle">불편 하나를<br>창업 아이디어로 바꾸는 AI</h1>
-        <p class="lead" data-i18n="heroLead">
-          외국인 유학생, 부산 방문 관광객, 의료관광객이 겪는 불편을 입력하면
-          학생이 7일 안에 만들 수 있는 MVP와 발표 문장, 권리화 방향까지 정리합니다.
-        </p>
+        <p class="eyebrow" data-i18n="eyebrow">AI · 학생창업 · 다국어 · 사업화</p>
+        <h1 data-i18n-html="heroTitle">학생의 작은 문제 발견을<br>창업 가능성으로 연결합니다</h1>
+        <p class="lead" data-i18n="heroLead">특정 산업에 치우치지 않고, 캠퍼스 생활·AI 서비스·콘텐츠·관광·교육·ESG·제품 아이디어까지 창업지원단이 실제로 접수하고 진단할 수 있도록 설계했습니다.</p>
         <div class="hero-buttons">
-          <a href="#idea-builder" class="btn primary" data-i18n="ctaStart">지금 아이디어 만들기</a>
-          <a href="#why" class="btn outline" data-i18n="ctaWhy">사용법 보기</a>
+          <a href="#intake" class="btn primary" data-i18n="ctaStart">아이디어 진단 시작</a>
+          <a href="#flow" class="btn outline" data-i18n="ctaFlow">운영 구조 보기</a>
         </div>
       </div>
-      <div class="hero-card" aria-label="앱 핵심 흐름">
-        <div class="mini-window">
-          <div class="window-head"><span></span><span></span><span></span></div>
-          <div class="flow-row"><b data-i18n="flow1Title">불편 발견</b><em data-i18n="flow1Text">외국인 친구가 병원·교통·학교에서 막힘</em></div>
-          <div class="arrow">↓</div>
-          <div class="flow-row accent"><b data-i18n="flow2Title">AI 코칭</b><em data-i18n="flow2Text">문제정의·MVP·권리화 방향 생성</em></div>
-          <div class="arrow">↓</div>
-          <div class="flow-row"><b data-i18n="flow3Title">학생 발표</b><em data-i18n="flow3Text">30초 피치와 7일 실행계획 완성</em></div>
+      <div class="hero-card">
+        <div class="bridge-card">
+          <div class="bridge-step"><span>01</span><b data-i18n="heroCard1">문제 입력</b><em data-i18n="heroCard1t">학생이 본 불편과 고객을 입력</em></div>
+          <div class="bridge-arrow">→</div>
+          <div class="bridge-step accent"><span>02</span><b data-i18n="heroCard2">5개 아이디어</b><em data-i18n="heroCard2t">AI가 분야별 창업 가능성 제안</em></div>
+          <div class="bridge-arrow">→</div>
+          <div class="bridge-step"><span>03</span><b data-i18n="heroCard3">지원 연계</b><em data-i18n="heroCard3t">멘토링·권리화·보육센터 트랙</em></div>
         </div>
       </div>
     </section>
   </header>
 
   <main>
-    <section id="why" class="section language-zone" aria-labelledby="language-title">
+    <section id="language" class="section language-zone">
       <div class="language-panel">
-        <div class="language-copy">
-          <p class="section-label" data-i18n="languageLabel">Language</p>
-          <h2 id="language-title" data-i18n="languageTitle">언어를 선택하면 화면과 AI 답변 언어가 바뀝니다.</h2>
-          <p data-i18n="languageDesc">학생들이 한국어·영어·베트남어·일본어·중국어로 바로 실습할 수 있도록 번역 버튼을 추가했습니다.</p>
-        </div>
-        <div class="language-switcher" role="group" aria-label="언어 선택">
-          <button type="button" class="lang-btn active" data-lang="ko">
-            <span class="avatar ko"><img src="assets/lang-ko.png" alt="한국어 캐릭터" loading="lazy"></span><strong>KO</strong><small>한국어</small>
-          </button>
-          <button type="button" class="lang-btn" data-lang="en">
-            <span class="avatar en"><img src="assets/lang-en.png" alt="English character" loading="lazy"></span><strong>EN</strong><small>English</small>
-          </button>
-          <button type="button" class="lang-btn" data-lang="vi">
-            <span class="avatar vi"><img src="assets/lang-vi.png" alt="Tiếng Việt character" loading="lazy"></span><strong>VI</strong><small>Tiếng Việt</small>
-          </button>
-          <button type="button" class="lang-btn" data-lang="ja">
-            <span class="avatar ja"><img src="assets/lang-ja.png" alt="日本語キャラクター" loading="lazy"></span><strong>JP</strong><small>日本語</small>
-          </button>
-          <button type="button" class="lang-btn" data-lang="zh">
-            <span class="avatar zh"><img src="assets/lang-zh.png" alt="中文角色" loading="lazy"></span><strong>CN</strong><small>中文</small>
-          </button>
-          <button type="button" class="lang-btn" data-lang="ar">
-            <span class="avatar ar"><img src="assets/lang-ar.png" alt="Arabic character" loading="lazy"></span><strong>AR</strong><small>العربية</small>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <section class="intro-grid section">
-      <article class="intro-card dark">
-        <p class="section-label" data-i18n="msgLabel">대표 메시지</p>
-        <h2 data-i18n="msgTitle">창업은 상금을 받기 위한 발표가 아닙니다.</h2>
-        <p data-i18n="msgText">
-          창업은 누군가의 불편을 발견하고, 그것을 고객이 믿을 수 있는 구조로 바꾸는 과정입니다.
-          이 앱은 학생들이 그 과정을 직접 체험하도록 만든 작은 선물입니다.
-        </p>
-      </article>
-      <article class="intro-card light">
-        <p class="section-label" data-i18n="strengthLabel">BUFS 학생의 강점</p>
-        <h2 data-i18n="strengthTitle">외국어는 시험 과목이 아니라 창업 자산입니다.</h2>
-        <ul>
-          <li data-i18n="strength1">외국인 유학생과 가까운 현장</li>
-          <li data-i18n="strength2">다국어·문화 이해 역량</li>
-          <li data-i18n="strength3">부산 관광과 글로벌 네트워크</li>
-          <li data-i18n="strength4">AI·노코드 도구로 빠른 MVP 제작</li>
-        </ul>
-      </article>
-    </section>
-
-    <section class="section steps" aria-labelledby="steps-title">
-      <p class="section-label" data-i18n="stepsLabel">4단계 창업 사고법</p>
-      <h2 id="steps-title" data-i18n="stepsTitle">불편 → 작은 서비스 → 이름 → 보호</h2>
-      <div class="step-list">
-        <article><span>01</span><h3 data-i18n="step1Title">불편 찾기</h3><p data-i18n="step1Text">외국인 친구가 학교·병원·식당·교통에서 막히는 순간을 관찰합니다.</p></article>
-        <article><span>02</span><h3 data-i18n="step2Title">작게 만들기</h3><p data-i18n="step2Text">구글폼, 챗봇, 지도 페이지, 문장카드 같은 작은 MVP를 먼저 만듭니다.</p></article>
-        <article><span>03</span><h3 data-i18n="step3Title">이름 붙이기</h3><p data-i18n="step3Text">기억하기 쉬운 서비스명과 한 줄 설명으로 아이디어를 선명하게 만듭니다.</p></article>
-        <article><span>04</span><h3 data-i18n="step4Title">보호 생각하기</h3><p data-i18n="step4Text">이름은 상표, 콘텐츠는 저작권, AI 처리 흐름은 특허 후보로 정리합니다.</p></article>
-      </div>
-    </section>
-
-    <section id="idea-builder" class="section builder" aria-labelledby="builder-title">
-      <div class="section-head">
         <div>
-          <p class="section-label">AI Idea Coach</p>
-          <h2 id="builder-title" data-i18n="builderTitle">학생 창업 아이디어 생성기</h2>
-          <p data-i18n="builderDesc">학생이 본 불편을 입력하면 AI가 발표용 구조로 정리합니다.</p>
+          <p class="section-label" data-i18n="languageLabel">Language</p>
+          <h2 data-i18n="languageTitle">학생과 외국인 유학생 모두 참여할 수 있게 다국어로 운영합니다.</h2>
+          <p data-i18n="languageDesc">화면과 AI 결과 언어가 함께 바뀝니다. 창업지원단은 다국어 접수 통로로 활용할 수 있습니다.</p>
         </div>
-        <div class="mode-badge" data-i18n="modeBadge">Netlify + AI 연결형</div>
+        <div class="language-switcher" role="group" aria-label="Language selector">
+          <button type="button" class="lang-btn active" data-lang="ko"><img src="assets/lang-ko.png" alt=""><b>KO</b><small>한국어</small></button>
+          <button type="button" class="lang-btn" data-lang="en"><img src="assets/lang-en.png" alt=""><b>EN</b><small>English</small></button>
+          <button type="button" class="lang-btn" data-lang="vi"><img src="assets/lang-vi.png" alt=""><b>VI</b><small>Tiếng Việt</small></button>
+          <button type="button" class="lang-btn" data-lang="ja"><img src="assets/lang-ja.png" alt=""><b>JP</b><small>日本語</small></button>
+          <button type="button" class="lang-btn" data-lang="zh"><img src="assets/lang-zh.png" alt=""><b>CN</b><small>中文</small></button>
+          <button type="button" class="lang-btn" data-lang="ar"><img src="assets/lang-ar.png" alt=""><b>AR</b><small>العربية</small></button>
+        </div>
       </div>
+    </section>
 
+    <section id="flow" class="section flow-section">
+      <p class="section-label" data-i18n="flowLabel">운영 흐름</p>
+      <h2 data-i18n="flowTitle">창업지원단이 실제로 쓰기 위한 접수·진단·연계 구조</h2>
+      <div class="flow-grid">
+        <article><span>1</span><b data-i18n="flow1">다국어 접수</b><p data-i18n="flow1t">팀 정보, 분야, 문제, 고객, MVP 방식 입력</p></article>
+        <article><span>2</span><b data-i18n="flow2">AI 1차 진단</b><p data-i18n="flow2t">5개 아이디어, 점수, 난이도, 수익모델 제안</p></article>
+        <article><span>3</span><b data-i18n="flow3">메일 제출·링크</b><p data-i18n="flow3t">AI 진단 결과 메일 제출, 디지털 포트폴리오 링크 생성</p></article>
+        <article><span>4</span><b data-i18n="flow4">후속 지원</b><p data-i18n="flow4t">멘토링, 특허·상표 검토, 창업보육센터 연계</p></article>
+      </div>
+    </section>
+
+    <section id="intake" class="section builder" aria-labelledby="builder-title">
+      <div class="section-head">
+        <div><p class="section-label">Startup Intake</p><h2 id="builder-title" data-i18n="builderTitle">학생창업 아이디어 접수·진단</h2><p data-i18n="builderDesc">의료관광에 한정하지 않고, 모든 전공 학생의 창업 아이디어를 창업지원단 관점으로 진단합니다.</p></div>
+        <div class="mode-badge">Netlify + OpenAI API</div>
+      </div>
       <div class="builder-grid">
         <form id="ideaForm" class="panel form-panel">
-          <label>
-            <span data-i18n="targetLabel">누구의 불편인가요?</span>
-            <select id="target" required></select>
-          </label>
-
-          <label>
-            <span data-i18n="problemLabel">어떤 불편을 보았나요?</span>
-            <textarea id="problem" rows="5" data-i18n-placeholder="problemPlaceholder" placeholder="예: 한국에 처음 온 유학생이 은행계좌, 휴대폰 개통, 병원 방문, 버스 이용을 어려워한다." required></textarea>
-          </label>
-
-          <label>
-            <span data-i18n="strengthFormLabel">학생 팀의 강점은 무엇인가요?</span>
-            <select id="strength" required></select>
-          </label>
-
-          <label>
-            <span data-i18n="toolLabel">첫 MVP는 무엇으로 만들까요?</span>
-            <select id="tool" required></select>
-          </label>
-
+          <div class="form-row two">
+            <label><span data-i18n="teamLabel">팀명</span><input id="teamName" type="text" data-i18n-placeholder="teamPlaceholder" placeholder="Global Bridge Team" required></label>
+            <label><span data-i18n="leaderLabel">대표 학생 이름</span><input id="leaderName" type="text" data-i18n-placeholder="leaderPlaceholder" placeholder="홍길동" required></label>
+          </div>
+          <div class="form-row two">
+            <label><span data-i18n="departmentLabel">학과/전공</span><input id="department" type="text" data-i18n-placeholder="departmentPlaceholder" placeholder="베트남어전공 / AI융합 / 관광 등"></label>
+            <label><span data-i18n="emailLabel">연락 이메일</span><input id="email" type="email" data-i18n-placeholder="emailPlaceholder" placeholder="student@bufs.ac.kr"></label>
+          </div>
+          <label><span data-i18n="categoryLabel">아이디어 분야</span><select id="category" required></select></label>
+          <label><span data-i18n="problemLabel">해결하고 싶은 문제</span><textarea id="problem" rows="4" required data-i18n-placeholder="problemPlaceholder" placeholder="예: 학생들이 교내 비교과, 장학, 진로 정보를 흩어진 공지에서 찾기 어려워합니다."></textarea></label>
+          <label><span data-i18n="customerLabel">누가 가장 불편한가요?</span><input id="targetUser" type="text" data-i18n-placeholder="customerPlaceholder" placeholder="예: 신입생, 외국인 유학생, 취업 준비생, 지역 소상공인"></label>
+          <label><span data-i18n="limitLabel">기존 해결 방식의 한계</span><textarea id="currentLimit" rows="3" data-i18n-placeholder="limitPlaceholder" placeholder="예: 공지가 여러 페이지에 흩어져 있고, 개인 상황에 맞는 안내가 어렵습니다."></textarea></label>
+          <label><span data-i18n="ideaHintLabel">이미 생각한 해결 아이디어가 있나요?</span><textarea id="roughIdea" rows="3" data-i18n-placeholder="ideaHintPlaceholder" placeholder="없어도 됩니다. AI가 5개 방향을 제안합니다."></textarea></label>
+          <div class="form-row two">
+            <label><span data-i18n="strengthLabel">우리 팀의 강점</span><select id="strength" required></select></label>
+            <label><span data-i18n="mvpLabel">첫 MVP 방식</span><select id="mvpTool" required></select></label>
+          </div>
+          <label><span data-i18n="supportLabel">학교에 요청하고 싶은 지원</span><select id="supportNeed" required></select></label>
+          <label class="consent"><input id="consent" type="checkbox" required><span data-i18n="consentText">제출 아이디어는 학생/팀의 자산이며, 심사·멘토링 목적 열람에 동의합니다. 특허·상표 등 권리화는 별도 협의가 필요함을 이해합니다.</span></label>
           <div class="button-row">
-            <button class="btn primary" type="submit" data-i18n="submitBtn">AI로 아이디어 만들기</button>
-            <button class="btn soft" id="copyBtn" type="button" data-i18n="copyBtn">결과 복사</button>
-            <button class="btn email" id="emailBtn" type="button" data-i18n="emailBtn">메일로 보내기</button>
+            <button class="btn primary" type="submit" data-i18n="generateBtn">AI로 5개 아이디어 진단</button>
+            <button class="btn soft" id="mailSubmitBtn" type="button" data-i18n="mailBtn">창업지원단 메일 제출</button>
             <button class="btn ghost" id="resetBtn" type="button" data-i18n="resetBtn">초기화</button>
           </div>
-          <p class="small-note" data-i18n="apiNote">API 키가 설정되지 않은 경우에는 예시형 결과가 먼저 표시됩니다.</p>
+          <p class="small-note" data-i18n="apiNote">실제 AI 응답은 Netlify 환경변수 OPENAI_API_KEY가 설정되어 있을 때 작동합니다.</p>
         </form>
-
-        <section class="panel result-panel" aria-live="polite" aria-labelledby="result-title">
-          <div class="result-header">
-            <span class="tag" data-i18n="resultTag">AI 결과</span>
-            <h3 id="result-title" data-i18n="resultTitle">발표용 아이디어 초안</h3>
-          </div>
-          <div id="resultBox" class="result-box"></div>
+        <section class="panel result-panel" aria-live="polite">
+          <div class="result-header"><span class="tag" data-i18n="resultTag">AI 진단 결과</span><h3 data-i18n="resultTitle">5개 창업 가능성</h3></div>
+          <div id="resultBox" class="result-box"><div class="empty-state"><strong data-i18n="emptyTitle">왼쪽 양식을 입력해 보세요.</strong><p data-i18n="emptyText">AI가 5개의 아이디어, 점수, MVP, 수익모델, 권리화 방향을 제시합니다.</p></div></div>
         </section>
       </div>
     </section>
 
-    <section id="examples" class="section examples" aria-labelledby="examples-title">
-      <p class="section-label" data-i18n="examplesLabel">추천 아이템 TOP 5</p>
-      <h2 id="examples-title" data-i18n="examplesTitle">학생들이 바로 시작하기 좋은 아이디어</h2>
-      <div class="example-grid" id="templateCards"></div>
-    </section>
-
-    <section class="section case-study" aria-labelledby="case-title">
-      <div>
-        <p class="section-label" data-i18n="caseLabel">Medi Hana 사례</p>
-        <h2 id="case-title" data-i18n="caseTitle">의료관광객의 빈 시간을 체류 경험으로</h2>
-        <p data-i18n="caseText">
-          Medi Hana Care Route AI는 병원 추천이나 의료 판단이 아니라,
-          병원 방문 전후의 대기·휴식·동반가족 체류 문제를 안전한 동선 안내로 바꾸는 사례입니다.
-        </p>
-      </div>
-      <div class="case-flow">
-        <span data-i18n="caseFlow1">고객 질문</span><i>→</i><span data-i18n="caseFlow2">상황 분석</span><i>→</i><span data-i18n="caseFlow3">관광 데이터</span><i>→</i><span data-i18n="caseFlow4">체류동선</span><i>→</i><span data-i18n="caseFlow5">상담 연결</span>
-      </div>
-    </section>
-
-    <section id="rights" class="section rights" aria-labelledby="rights-title">
-      <p class="section-label" data-i18n="rightsLabel">아이디어 보호법</p>
-      <h2 id="rights-title" data-i18n="rightsTitle">아이디어는 보호할 대상에 따라 권리가 달라집니다</h2>
-      <div class="rights-grid">
-        <article><b data-i18n="right1Title">상표</b><p data-i18n="right1Text">서비스 이름과 브랜드를 보호합니다.</p></article>
-        <article><b data-i18n="right2Title">저작권</b><p data-i18n="right2Text">글, 영상, 번역문, 문장카드 콘텐츠를 보호합니다.</p></article>
-        <article><b data-i18n="right3Title">디자인</b><p data-i18n="right3Text">앱 화면, 제품 외형, 카드 디자인을 보호합니다.</p></article>
-        <article><b data-i18n="right4Title">실용신안</b><p data-i18n="right4Text">장치 구조의 실용적 개선을 보호합니다.</p></article>
-        <article><b data-i18n="right5Title">특허 후보</b><p data-i18n="right5Text">AI가 분석하고 연결하는 처리 흐름을 검토합니다.</p></article>
-        <article><b data-i18n="right6Title">영업비밀</b><p data-i18n="right6Text">고객 DB, 운영 노하우, 파트너 조건은 내부 자산입니다.</p></article>
-      </div>
+    <section id="criteria" class="section criteria">
+      <p class="section-label" data-i18n="criteriaLabel">진단 기준</p>
+      <h2 data-i18n="criteriaTitle">창업지원단 심사에 연결하기 쉬운 8개 기준</h2>
+      <div class="criteria-grid" id="criteriaGrid"></div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="footer-brand">
-      <img src="assets/bufs-logo.jpg" alt="BUFS 로고" />
-      <div>
-        <strong>BUFS Startup Idea Builder AI</strong>
-        <span data-i18n="footerSub">부산외대 학생 창업동아리 실습용 비공식 교육 앱</span>
-      </div>
-    </div>
-    <p data-i18n="footerNotice">본 앱은 학생 발표·교육용 예시이며 의료 판단, 법률 자문, 투자 권유를 제공하지 않습니다.</p>
+    <div class="footer-brand"><img src="assets/bufs-logo.jpg" alt=""><div><strong>BUFS Startup Bridge AI v2</strong><span data-i18n="footerSub">부산외대 창업지원단 활용을 가정한 학생창업 접수·진단 MVP</span></div></div>
+    <p data-i18n="footerNote">교육·제안용 MVP입니다. 실제 운영 시 개인정보처리방침, 권리 귀속 동의, 관리자 승인 절차가 필요합니다.</p>
   </footer>
-
   <script src="app.js"></script>
 </body>
 </html>

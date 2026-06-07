@@ -1,1702 +1,533 @@
 const languageMeta = {
-  "ko": {
-    "label": "한국어",
-    "prompt": "Korean",
-    "htmlLang": "ko",
-    "dir": "ltr"
-  },
-  "en": {
-    "label": "English",
-    "prompt": "English",
-    "htmlLang": "en",
-    "dir": "ltr"
-  },
-  "vi": {
-    "label": "Tiếng Việt",
-    "prompt": "Vietnamese",
-    "htmlLang": "vi",
-    "dir": "ltr"
-  },
-  "ja": {
-    "label": "日本語",
-    "prompt": "Japanese",
-    "htmlLang": "ja",
-    "dir": "ltr"
-  },
-  "zh": {
-    "label": "中文",
-    "prompt": "Chinese",
-    "htmlLang": "zh-CN",
-    "dir": "ltr"
-  },
-  "ar": {
-    "label": "العربية",
-    "prompt": "Arabic",
-    "htmlLang": "ar",
-    "dir": "rtl"
-  }
+  ko: { label: "한국어", prompt: "Korean", dir: "ltr" },
+  en: { label: "English", prompt: "English", dir: "ltr" },
+  vi: { label: "Tiếng Việt", prompt: "Vietnamese", dir: "ltr" },
+  ja: { label: "日本語", prompt: "Japanese", dir: "ltr" },
+  zh: { label: "中文", prompt: "Chinese", dir: "ltr" },
+  ar: { label: "العربية", prompt: "Arabic", dir: "rtl" }
 };
-let currentLang = localStorage.getItem("bufsLang") || "ko";
+
+let currentLang = localStorage.getItem("bridgeLang") || "ko";
+let lastResult = null;
+let lastForm = null;
+let selectedIdea = null;
 
 const ui = {
-  "ko": {
-    "brandSub": "부산외대 학생 창업 실습용 AI",
-    "navMake": "아이디어 만들기",
-    "navWhy": "왜 필요한가요?",
-    "navExamples": "추천 아이템",
-    "navRights": "권리화",
-    "eyebrow": "외국어 · 관광 · AI · 다문화",
-    "heroTitle": "불편 하나를<br>창업 아이디어로 바꾸는 AI",
-    "heroLead": "외국인 유학생, 부산 방문 관광객, 의료관광객이 겪는 불편을 입력하면 학생이 7일 안에 만들 수 있는 MVP와 발표 문장, 권리화 방향까지 정리합니다.",
-    "ctaStart": "지금 아이디어 만들기",
-    "ctaWhy": "사용법 보기",
-    "flow1Title": "불편 발견",
-    "flow1Text": "외국인 친구가 병원·교통·학교에서 막힘",
-    "flow2Title": "AI 코칭",
-    "flow2Text": "문제정의·MVP·권리화 방향 생성",
-    "flow3Title": "학생 발표",
-    "flow3Text": "30초 피치와 7일 실행계획 완성",
-    "languageLabel": "Language",
-    "languageTitle": "언어를 선택하면 화면과 AI 답변 언어가 바뀝니다.",
-    "languageDesc": "학생들이 한국어·영어·베트남어·일본어·중국어·아랍어로 바로 실습할 수 있도록 번역 버튼을 추가했습니다.",
-    "msgLabel": "대표 메시지",
-    "msgTitle": "창업은 상금을 받기 위한 발표가 아닙니다.",
-    "msgText": "창업은 누군가의 불편을 발견하고, 그것을 고객이 믿을 수 있는 구조로 바꾸는 과정입니다. 이 앱은 학생들이 그 과정을 직접 체험하도록 만든 작은 선물입니다.",
-    "strengthLabel": "BUFS 학생의 강점",
-    "strengthTitle": "외국어는 시험 과목이 아니라 창업 자산입니다.",
-    "strength1": "외국인 유학생과 가까운 현장",
-    "strength2": "다국어·문화 이해 역량",
-    "strength3": "부산 관광과 글로벌 네트워크",
-    "strength4": "AI·노코드 도구로 빠른 MVP 제작",
-    "stepsLabel": "4단계 창업 사고법",
-    "stepsTitle": "불편 → 작은 서비스 → 이름 → 보호",
-    "step1Title": "불편 찾기",
-    "step1Text": "외국인 친구가 학교·병원·식당·교통에서 막히는 순간을 관찰합니다.",
-    "step2Title": "작게 만들기",
-    "step2Text": "구글폼, 챗봇, 지도 페이지, 문장카드 같은 작은 MVP를 먼저 만듭니다.",
-    "step3Title": "이름 붙이기",
-    "step3Text": "기억하기 쉬운 서비스명과 한 줄 설명으로 아이디어를 선명하게 만듭니다.",
-    "step4Title": "보호 생각하기",
-    "step4Text": "이름은 상표, 콘텐츠는 저작권, AI 처리 흐름은 특허 후보로 정리합니다.",
-    "builderTitle": "학생 창업 아이디어 생성기",
-    "builderDesc": "학생이 본 불편을 입력하면 AI가 발표용 구조로 정리합니다.",
-    "modeBadge": "Netlify + AI 연결형",
-    "targetLabel": "누구의 불편인가요?",
-    "problemLabel": "어떤 불편을 보았나요?",
-    "problemPlaceholder": "예: 한국에 처음 온 유학생이 은행계좌, 휴대폰 개통, 병원 방문, 버스 이용을 어려워한다.",
-    "strengthFormLabel": "학생 팀의 강점은 무엇인가요?",
-    "toolLabel": "첫 MVP는 무엇으로 만들까요?",
-    "submitBtn": "AI로 아이디어 만들기",
-    "copyBtn": "결과 복사",
-    "emailBtn": "담당자 메일로 보내기",
-    "emailSubject": "BUFS 창업 아이디어 AI 결과",
-    "emailIntro": "아래 내용은 BUFS Startup Idea Builder AI에서 생성한 학생 창업 아이디어 결과입니다.",
-    "emailCopied": "결과를 복사하고 메일 작성창을 열었습니다. 메일 내용을 확인한 뒤 발송하세요.",
-    "emailNoResult": "먼저 AI 결과를 생성해 주세요.",
-    "resetBtn": "초기화",
-    "apiNote": "API 키가 설정되지 않은 경우에는 예시형 결과가 먼저 표시됩니다.",
-    "resultTag": "AI 결과",
-    "resultTitle": "발표용 아이디어 초안",
-    "emptyTitle": "왼쪽에서 불편을 입력해 보세요.",
-    "emptyText": "AI가 아이디어 이름, 한 줄 정의, 7일 MVP 계획, 권리화 방향, 30초 발표문을 만들어줍니다.",
-    "loadingTitle": "AI가 아이디어를 정리하고 있습니다...",
-    "loadingText": "잠시만 기다려 주세요.",
-    "fallbackNote": "AI 연결 전 예시 결과입니다. Netlify 환경변수 OPENAI_API_KEY를 넣으면 실제 AI 응답으로 바뀝니다.",
-    "aiNote": "AI 연결 결과",
-    "copied": "결과를 복사했습니다.",
-    "copyFail": "복사에 실패했습니다. 결과 내용을 직접 선택해서 복사해 주세요.",
-    "examplesLabel": "추천 아이템 TOP 5",
-    "examplesTitle": "학생들이 바로 시작하기 좋은 아이디어",
-    "caseLabel": "Medi Hana 사례",
-    "caseTitle": "의료관광객의 빈 시간을 체류 경험으로",
-    "caseText": "Medi Hana Care Route AI는 병원 추천이나 의료 판단이 아니라, 병원 방문 전후의 대기·휴식·동반가족 체류 문제를 안전한 동선 안내로 바꾸는 사례입니다.",
-    "caseFlow1": "고객 질문",
-    "caseFlow2": "상황 분석",
-    "caseFlow3": "관광 데이터",
-    "caseFlow4": "체류동선",
-    "caseFlow5": "상담 연결",
-    "rightsLabel": "아이디어 보호법",
-    "rightsTitle": "아이디어는 보호할 대상에 따라 권리가 달라집니다",
-    "right1Title": "상표",
-    "right1Text": "서비스 이름과 브랜드를 보호합니다.",
-    "right2Title": "저작권",
-    "right2Text": "글, 영상, 번역문, 문장카드 콘텐츠를 보호합니다.",
-    "right3Title": "디자인",
-    "right3Text": "앱 화면, 제품 외형, 카드 디자인을 보호합니다.",
-    "right4Title": "실용신안",
-    "right4Text": "장치 구조의 실용적 개선을 보호합니다.",
-    "right5Title": "특허 후보",
-    "right5Text": "AI가 분석하고 연결하는 처리 흐름을 검토합니다.",
-    "right6Title": "영업비밀",
-    "right6Text": "고객 DB, 운영 노하우, 파트너 조건은 내부 자산입니다.",
-    "footerSub": "부산외대 학생 창업동아리 실습용 비공식 교육 앱",
-    "footerNotice": "본 앱은 학생 발표·교육용 예시이며 의료 판단, 법률 자문, 투자 권유를 제공하지 않습니다.",
-    "targetOptions": {
-      "foreignStudent": "외국인 유학생",
-      "medicalTourist": "외국인 의료관광객",
-      "busanTourist": "부산 방문 외국인 관광객",
-      "kBeautyCustomer": "K-뷰티 관심 고객",
-      "hospitalVisitor": "외국인 병원 방문자",
-      "multiculturalFamily": "다문화 가족·보호자"
-    },
-    "strengthOptions": {
-      "language": "외국어·번역",
-      "content": "영상·SNS 콘텐츠",
-      "tourism": "관광 코스 기획",
-      "ai": "AI 챗봇·노코드",
-      "beauty": "K-뷰티 관심·제품 이해"
-    },
-    "toolOptions": {
-      "chatbot": "AI 챗봇",
-      "webapp": "간단한 웹앱",
-      "form": "구글폼 + 자동 안내문",
-      "map": "지도 기반 안내 페이지",
-      "cards": "다국어 문장카드"
-    },
-    "resultHeads": [
-      "1. 아이디어 이름",
-      "2. 한 줄 정의",
-      "3. 발견한 불편",
-      "4. 대상 고객과 해결 방식",
-      "5. 7일 MVP 계획",
-      "6. 앱에 넣을 예시 질문",
-      "7. 권리화 방향",
-      "8. 주의사항",
-      "9. 30초 발표 문장",
-      "10. 오늘 바로 할 일"
-    ],
-    "targetPrefix": "대상",
-    "solutionPrefix": "해결",
-    "notProvided": "입력된 내용 없음"
-  },
-  "en": {
-    "brandSub": "AI startup practice tool for BUFS students",
-    "navMake": "Build idea",
-    "navWhy": "Why it matters",
-    "navExamples": "Ideas",
-    "navRights": "IP basics",
-    "eyebrow": "Languages · Tourism · AI · Multiculture",
-    "heroTitle": "Turn one inconvenience<br>into a startup idea",
-    "heroLead": "Enter a problem faced by international students, Busan visitors, or medical tourists. The AI organizes a 7-day MVP plan, a pitch script, and an IP direction.",
-    "ctaStart": "Create an idea",
-    "ctaWhy": "How it works",
-    "flow1Title": "Find a pain point",
-    "flow1Text": "A foreign friend struggles at school, hospital, or transit",
-    "flow2Title": "AI coaching",
-    "flow2Text": "Problem, MVP, and IP direction",
-    "flow3Title": "Student pitch",
-    "flow3Text": "30-second pitch and 7-day action plan",
-    "languageLabel": "Language",
-    "languageTitle": "Choose a language for the page and AI response.",
-    "languageDesc": "Students can practice in Korean, English, Vietnamese, Japanese, Chinese, and Arabic.",
-    "msgLabel": "Core message",
-    "msgTitle": "Startup is not just a contest for prize money.",
-    "msgText": "Startup begins when you find someone’s inconvenience and turn it into a structure customers can trust. This app is a small gift for students to experience that process.",
-    "strengthLabel": "BUFS strengths",
-    "strengthTitle": "A foreign language can become a startup asset.",
-    "strength1": "Close access to international students",
-    "strength2": "Multilingual and cultural understanding",
-    "strength3": "Busan tourism and global networks",
-    "strength4": "Fast MVPs with AI and no-code tools",
-    "stepsLabel": "4-step thinking",
-    "stepsTitle": "Pain point → Small service → Name → Protect",
-    "step1Title": "Find",
-    "step1Text": "Observe where foreign friends get stuck in school, hospitals, restaurants, or transit.",
-    "step2Title": "Build small",
-    "step2Text": "Start with a small MVP such as a form, chatbot, map page, or phrase card.",
-    "step3Title": "Name it",
-    "step3Text": "Make the idea clear with a memorable service name and one-line explanation.",
-    "step4Title": "Protect it",
-    "step4Text": "Name as trademark, content as copyright, and AI flow as a patent candidate.",
-    "builderTitle": "Student startup idea generator",
-    "builderDesc": "Enter a pain point and AI will organize it into a pitch-ready structure.",
-    "modeBadge": "Netlify + AI connected",
-    "targetLabel": "Whose problem is it?",
-    "problemLabel": "What inconvenience did you notice?",
-    "problemPlaceholder": "Example: New international students struggle with banking, phone setup, hospital visits, and transit cards.",
-    "strengthFormLabel": "What is your team’s strength?",
-    "toolLabel": "What will the first MVP be?",
-    "submitBtn": "Generate with AI",
-    "copyBtn": "Copy result",
-    "emailBtn": "Send to staff email",
-    "emailSubject": "BUFS Startup Idea AI Result",
-    "emailIntro": "The following content was generated by BUFS Startup Idea Builder AI.",
-    "emailCopied": "The result was copied and an email compose window has opened. Please review and send it.",
-    "emailNoResult": "Please generate an AI result first.",
-    "resetBtn": "Reset",
-    "apiNote": "If the API key is not set, a sample result will be shown first.",
-    "resultTag": "AI result",
-    "resultTitle": "Pitch-ready idea draft",
-    "emptyTitle": "Enter a pain point on the left.",
-    "emptyText": "AI will create an idea name, one-line definition, 7-day MVP plan, IP direction, and 30-second pitch.",
-    "loadingTitle": "AI is organizing your idea...",
-    "loadingText": "Please wait a moment.",
-    "fallbackNote": "Sample result before AI connection. Add OPENAI_API_KEY in Netlify environment variables for real AI output.",
-    "aiNote": "AI-connected result",
-    "copied": "Result copied.",
-    "copyFail": "Copy failed. Please select and copy the result manually.",
-    "examplesLabel": "Top 5 recommended ideas",
-    "examplesTitle": "Ideas students can start right away",
-    "caseLabel": "Medi Hana case",
-    "caseTitle": "Turning medical tourist waiting time into a safe stay route",
-    "caseText": "Medi Hana Care Route AI does not recommend hospitals or make medical decisions. It turns waiting, rest, companion care, and short-stay needs into safe route guidance.",
-    "caseFlow1": "Question",
-    "caseFlow2": "Situation analysis",
-    "caseFlow3": "Tourism data",
-    "caseFlow4": "Stay route",
-    "caseFlow5": "Consultation",
-    "rightsLabel": "How to protect ideas",
-    "rightsTitle": "Different assets need different rights",
-    "right1Title": "Trademark",
-    "right1Text": "Protects service names and brands.",
-    "right2Title": "Copyright",
-    "right2Text": "Protects text, video, translations, and phrase card content.",
-    "right3Title": "Design",
-    "right3Text": "Protects app screens, product appearance, and card design.",
-    "right4Title": "Utility model",
-    "right4Text": "Protects practical improvements to device structures.",
-    "right5Title": "Patent candidate",
-    "right5Text": "Reviews AI analysis and connection flows.",
-    "right6Title": "Trade secret",
-    "right6Text": "Customer DB, operational know-how, and partner terms are internal assets.",
-    "footerSub": "Unofficial educational app for BUFS student startup practice",
-    "footerNotice": "This app is for student presentation and education only. It does not provide medical judgment, legal advice, or investment solicitation.",
-    "targetOptions": {
-      "foreignStudent": "International student",
-      "medicalTourist": "Foreign medical tourist",
-      "busanTourist": "Foreign visitor to Busan",
-      "kBeautyCustomer": "K-beauty customer",
-      "hospitalVisitor": "Foreign hospital visitor",
-      "multiculturalFamily": "Multicultural family/caregiver"
-    },
-    "strengthOptions": {
-      "language": "Languages & translation",
-      "content": "Video & SNS content",
-      "tourism": "Tour course planning",
-      "ai": "AI chatbot & no-code",
-      "beauty": "K-beauty knowledge"
-    },
-    "toolOptions": {
-      "chatbot": "AI chatbot",
-      "webapp": "Simple web app",
-      "form": "Google Form + auto guide",
-      "map": "Map-based guide page",
-      "cards": "Multilingual phrase cards"
-    },
-    "resultHeads": [
-      "1. Idea name",
-      "2. One-line definition",
-      "3. Pain point",
-      "4. Target user and solution",
-      "5. 7-day MVP plan",
-      "6. Sample questions for the app",
-      "7. IP direction",
-      "8. Cautions",
-      "9. 30-second pitch",
-      "10. Action for today"
-    ],
-    "targetPrefix": "Target",
-    "solutionPrefix": "Solution",
-    "notProvided": "Not provided"
-  },
-  "vi": {
-    "brandSub": "AI thực hành khởi nghiệp cho sinh viên BUFS",
-    "navMake": "Tạo ý tưởng",
-    "navWhy": "Vì sao cần?",
-    "navExamples": "Gợi ý",
-    "navRights": "Bảo hộ ý tưởng",
-    "eyebrow": "Ngoại ngữ · Du lịch · AI · Đa văn hóa",
-    "heroTitle": "Biến một bất tiện<br>thành ý tưởng khởi nghiệp",
-    "heroLead": "Nhập vấn đề của du học sinh, khách du lịch Busan hoặc khách du lịch y tế. AI sẽ sắp xếp kế hoạch MVP 7 ngày, câu thuyết trình và hướng bảo hộ ý tưởng.",
-    "ctaStart": "Tạo ý tưởng ngay",
-    "ctaWhy": "Xem cách dùng",
-    "flow1Title": "Phát hiện bất tiện",
-    "flow1Text": "Bạn nước ngoài gặp khó khăn ở trường, bệnh viện hoặc giao thông",
-    "flow2Title": "AI cố vấn",
-    "flow2Text": "Định nghĩa vấn đề, MVP và hướng bảo hộ",
-    "flow3Title": "Sinh viên thuyết trình",
-    "flow3Text": "Bài pitch 30 giây và kế hoạch 7 ngày",
-    "languageLabel": "Ngôn ngữ",
-    "languageTitle": "Chọn ngôn ngữ cho giao diện và câu trả lời AI.",
-    "languageDesc": "Sinh viên có thể thực hành bằng tiếng Hàn, Anh, Việt, Nhật, Trung và Ả Rập.",
-    "msgLabel": "Thông điệp chính",
-    "msgTitle": "Khởi nghiệp không chỉ là cuộc thi để nhận tiền thưởng.",
-    "msgText": "Khởi nghiệp bắt đầu từ việc phát hiện bất tiện của ai đó và biến nó thành một cấu trúc mà khách hàng có thể tin tưởng. Ứng dụng này là một món quà nhỏ để sinh viên trải nghiệm quá trình đó.",
-    "strengthLabel": "Thế mạnh của sinh viên BUFS",
-    "strengthTitle": "Ngoại ngữ có thể trở thành tài sản khởi nghiệp.",
-    "strength1": "Gần gũi với du học sinh quốc tế",
-    "strength2": "Năng lực đa ngôn ngữ và hiểu biết văn hóa",
-    "strength3": "Du lịch Busan và mạng lưới toàn cầu",
-    "strength4": "Tạo MVP nhanh bằng AI và công cụ no-code",
-    "stepsLabel": "Tư duy khởi nghiệp 4 bước",
-    "stepsTitle": "Bất tiện → Dịch vụ nhỏ → Tên gọi → Bảo vệ",
-    "step1Title": "Tìm bất tiện",
-    "step1Text": "Quan sát lúc bạn nước ngoài gặp khó khăn ở trường, bệnh viện, nhà hàng hoặc giao thông.",
-    "step2Title": "Làm thật nhỏ",
-    "step2Text": "Bắt đầu bằng MVP nhỏ như Google Form, chatbot, trang bản đồ hoặc thẻ câu đa ngôn ngữ.",
-    "step3Title": "Đặt tên",
-    "step3Text": "Làm rõ ý tưởng bằng tên dịch vụ dễ nhớ và phần giải thích một câu.",
-    "step4Title": "Nghĩ cách bảo vệ",
-    "step4Text": "Tên gọi có thể xem là nhãn hiệu, nội dung là bản quyền, quy trình AI là ứng viên sáng chế.",
-    "builderTitle": "Công cụ tạo ý tưởng khởi nghiệp cho sinh viên",
-    "builderDesc": "Nhập bất tiện bạn quan sát được, AI sẽ sắp xếp thành cấu trúc dùng được cho thuyết trình.",
-    "modeBadge": "Netlify + AI kết nối",
-    "targetLabel": "Đó là bất tiện của ai?",
-    "problemLabel": "Bạn đã thấy bất tiện nào?",
-    "problemPlaceholder": "Ví dụ: Du học sinh mới đến Hàn Quốc gặp khó khăn khi mở tài khoản ngân hàng, đăng ký điện thoại, đi bệnh viện và dùng thẻ giao thông.",
-    "strengthFormLabel": "Thế mạnh của nhóm sinh viên là gì?",
-    "toolLabel": "MVP đầu tiên sẽ làm bằng gì?",
-    "submitBtn": "Tạo ý tưởng bằng AI",
-    "copyBtn": "Sao chép kết quả",
-    "emailBtn": "Gửi đến email phụ trách",
-    "emailSubject": "Kết quả AI ý tưởng khởi nghiệp BUFS",
-    "emailIntro": "Nội dung dưới đây được tạo bởi BUFS Startup Idea Builder AI.",
-    "emailCopied": "Kết quả đã được sao chép và cửa sổ soạn email đã mở. Vui lòng kiểm tra rồi gửi.",
-    "emailNoResult": "Vui lòng tạo kết quả AI trước.",
-    "resetBtn": "Làm lại",
-    "apiNote": "Nếu chưa cài API key, kết quả mẫu sẽ được hiển thị trước.",
-    "resultTag": "Kết quả AI",
-    "resultTitle": "Bản nháp ý tưởng để thuyết trình",
-    "emptyTitle": "Hãy nhập bất tiện ở bên trái.",
-    "emptyText": "AI sẽ tạo tên ý tưởng, định nghĩa một câu, kế hoạch MVP 7 ngày, hướng bảo hộ và bài pitch 30 giây.",
-    "loadingTitle": "AI đang sắp xếp ý tưởng...",
-    "loadingText": "Vui lòng chờ một chút.",
-    "fallbackNote": "Đây là kết quả mẫu trước khi kết nối AI. Thêm OPENAI_API_KEY vào biến môi trường Netlify để nhận phản hồi AI thật.",
-    "aiNote": "Kết quả AI đã kết nối",
-    "copied": "Đã sao chép kết quả.",
-    "copyFail": "Không thể sao chép. Vui lòng chọn nội dung và sao chép thủ công.",
-    "examplesLabel": "TOP 5 ý tưởng gợi ý",
-    "examplesTitle": "Những ý tưởng sinh viên có thể bắt đầu ngay",
-    "caseLabel": "Ví dụ Medi Hana",
-    "caseTitle": "Biến thời gian chờ của khách du lịch y tế thành trải nghiệm lưu trú an toàn",
-    "caseText": "Medi Hana Care Route AI không giới thiệu bệnh viện hay đưa ra quyết định y tế. Dịch vụ này chuyển vấn đề chờ đợi, nghỉ ngơi, người nhà đi cùng và lưu trú ngắn hạn thành hướng dẫn tuyến đường an toàn.",
-    "caseFlow1": "Câu hỏi của khách",
-    "caseFlow2": "Phân tích tình huống",
-    "caseFlow3": "Dữ liệu du lịch",
-    "caseFlow4": "Tuyến lưu trú",
-    "caseFlow5": "Kết nối tư vấn",
-    "rightsLabel": "Cách bảo vệ ý tưởng",
-    "rightsTitle": "Mỗi loại tài sản cần một quyền bảo hộ khác nhau",
-    "right1Title": "Nhãn hiệu",
-    "right1Text": "Bảo vệ tên dịch vụ và thương hiệu.",
-    "right2Title": "Bản quyền",
-    "right2Text": "Bảo vệ văn bản, video, bản dịch và nội dung thẻ câu.",
-    "right3Title": "Thiết kế",
-    "right3Text": "Bảo vệ giao diện ứng dụng, hình dáng sản phẩm và thiết kế thẻ.",
-    "right4Title": "Giải pháp hữu ích",
-    "right4Text": "Bảo vệ cải tiến thực dụng của cấu trúc thiết bị.",
-    "right5Title": "Ứng viên sáng chế",
-    "right5Text": "Xem xét quy trình AI phân tích và kết nối thông tin.",
-    "right6Title": "Bí mật kinh doanh",
-    "right6Text": "Cơ sở dữ liệu khách hàng, bí quyết vận hành và điều kiện đối tác là tài sản nội bộ.",
-    "footerSub": "Ứng dụng giáo dục không chính thức cho thực hành khởi nghiệp của sinh viên BUFS",
-    "footerNotice": "Ứng dụng này chỉ dành cho giáo dục và thuyết trình của sinh viên; không cung cấp phán đoán y tế, tư vấn pháp lý hay lời mời đầu tư.",
-    "targetOptions": {
-      "foreignStudent": "Du học sinh quốc tế",
-      "medicalTourist": "Khách du lịch y tế nước ngoài",
-      "busanTourist": "Khách nước ngoài đến Busan",
-      "kBeautyCustomer": "Khách hàng quan tâm K-beauty",
-      "hospitalVisitor": "Người nước ngoài đến bệnh viện",
-      "multiculturalFamily": "Gia đình đa văn hóa/người chăm sóc"
-    },
-    "strengthOptions": {
-      "language": "Ngoại ngữ và dịch thuật",
-      "content": "Video và nội dung SNS",
-      "tourism": "Lập kế hoạch tuyến du lịch",
-      "ai": "Chatbot AI và no-code",
-      "beauty": "Hiểu biết K-beauty"
-    },
-    "toolOptions": {
-      "chatbot": "Chatbot AI",
-      "webapp": "Ứng dụng web đơn giản",
-      "form": "Google Form + hướng dẫn tự động",
-      "map": "Trang hướng dẫn dựa trên bản đồ",
-      "cards": "Thẻ câu đa ngôn ngữ"
-    },
-    "resultHeads": [
-      "1. Tên ý tưởng",
-      "2. Định nghĩa một câu",
-      "3. Bất tiện phát hiện",
-      "4. Khách hàng mục tiêu và cách giải quyết",
-      "5. Kế hoạch MVP 7 ngày",
-      "6. Câu hỏi mẫu cho ứng dụng",
-      "7. Hướng bảo hộ quyền",
-      "8. Lưu ý",
-      "9. Bài pitch 30 giây",
-      "10. Việc cần làm hôm nay"
-    ],
-    "targetPrefix": "Đối tượng",
-    "solutionPrefix": "Giải pháp",
-    "notProvided": "Chưa nhập"
-  },
-  "ja": {
-    "brandSub": "BUFS学生向け起業実習AI",
-    "navMake": "アイデア作成",
-    "navWhy": "なぜ必要か",
-    "navExamples": "おすすめ",
-    "navRights": "権利化",
-    "eyebrow": "外国語 · 観光 · AI · 多文化",
-    "heroTitle": "一つの不便を<br>起業アイデアへ変えるAI",
-    "heroLead": "留学生、釜山を訪れる観光客、医療観光客が感じる不便を入力すると、AIが7日間MVP計画、発表文、権利化の方向まで整理します。",
-    "ctaStart": "今すぐアイデア作成",
-    "ctaWhy": "使い方を見る",
-    "flow1Title": "不便を発見",
-    "flow1Text": "外国人の友人が病院・交通・学校で困る",
-    "flow2Title": "AIコーチング",
-    "flow2Text": "問題定義・MVP・権利化方向を生成",
-    "flow3Title": "学生発表",
-    "flow3Text": "30秒ピッチと7日間実行計画を完成",
-    "languageLabel": "言語",
-    "languageTitle": "言語を選ぶと画面とAI回答の言語が変わります。",
-    "languageDesc": "学生は韓国語・英語・ベトナム語・日本語・中国語・アラビア語で実習できます。",
-    "msgLabel": "代表メッセージ",
-    "msgTitle": "起業は賞金を得るための発表ではありません。",
-    "msgText": "起業とは、誰かの不便を発見し、それを顧客が信頼できる仕組みに変える過程です。このアプリは、その過程を学生が直接体験するための小さな贈り物です。",
-    "strengthLabel": "BUFS学生の強み",
-    "strengthTitle": "外国語は試験科目ではなく、起業の資産になります。",
-    "strength1": "外国人留学生に近い現場",
-    "strength2": "多言語・文化理解力",
-    "strength3": "釜山観光とグローバルネットワーク",
-    "strength4": "AI・ノーコードツールによる素早いMVP制作",
-    "stepsLabel": "4段階の起業思考法",
-    "stepsTitle": "不便 → 小さなサービス → 名前 → 保護",
-    "step1Title": "不便を探す",
-    "step1Text": "外国人の友人が学校・病院・食堂・交通で困る瞬間を観察します。",
-    "step2Title": "小さく作る",
-    "step2Text": "Googleフォーム、チャットボット、地図ページ、フレーズカードのような小さなMVPから始めます。",
-    "step3Title": "名前を付ける",
-    "step3Text": "覚えやすいサービス名と一文説明でアイデアを明確にします。",
-    "step4Title": "保護を考える",
-    "step4Text": "名前は商標、コンテンツは著作権、AI処理の流れは特許候補として整理します。",
-    "builderTitle": "学生起業アイデア生成ツール",
-    "builderDesc": "学生が見つけた不便を入力すると、AIが発表用の構成に整理します。",
-    "modeBadge": "Netlify + AI接続型",
-    "targetLabel": "誰の不便ですか？",
-    "problemLabel": "どんな不便を見ましたか？",
-    "problemPlaceholder": "例：韓国に来たばかりの留学生が銀行口座、携帯電話契約、病院訪問、交通カードの利用で困っている。",
-    "strengthFormLabel": "学生チームの強みは何ですか？",
-    "toolLabel": "最初のMVPは何で作りますか？",
-    "submitBtn": "AIでアイデアを作成",
-    "copyBtn": "結果をコピー",
-    "emailBtn": "担当者へメール送信",
-    "emailSubject": "BUFS起業アイデアAI結果",
-    "emailIntro": "以下の内容はBUFS Startup Idea Builder AIで生成された結果です。",
-    "emailCopied": "結果をコピーし、メール作成画面を開きました。内容を確認して送信してください。",
-    "emailNoResult": "先にAI結果を生成してください。",
-    "resetBtn": "リセット",
-    "apiNote": "APIキーが設定されていない場合は、まずサンプル結果が表示されます。",
-    "resultTag": "AI結果",
-    "resultTitle": "発表用アイデア草案",
-    "emptyTitle": "左側に不便を入力してください。",
-    "emptyText": "AIがアイデア名、一文定義、7日間MVP計画、権利化方向、30秒発表文を作成します。",
-    "loadingTitle": "AIがアイデアを整理しています...",
-    "loadingText": "少しお待ちください。",
-    "fallbackNote": "AI接続前のサンプル結果です。Netlify環境変数にOPENAI_API_KEYを追加すると、実際のAI応答に変わります。",
-    "aiNote": "AI接続結果",
-    "copied": "結果をコピーしました。",
-    "copyFail": "コピーに失敗しました。内容を選択して手動でコピーしてください。",
-    "examplesLabel": "おすすめアイデア TOP 5",
-    "examplesTitle": "学生がすぐに始めやすいアイデア",
-    "caseLabel": "Medi Hana事例",
-    "caseTitle": "医療観光客の待ち時間を安全な滞在体験へ",
-    "caseText": "Medi Hana Care Route AIは病院推薦や医療判断ではありません。病院訪問前後の待機・休憩・同伴家族の滞在問題を安全な動線案内に変える事例です。",
-    "caseFlow1": "顧客質問",
-    "caseFlow2": "状況分析",
-    "caseFlow3": "観光データ",
-    "caseFlow4": "滞在動線",
-    "caseFlow5": "相談連携",
-    "rightsLabel": "アイデアの保護法",
-    "rightsTitle": "保護する対象によって権利は異なります",
-    "right1Title": "商標",
-    "right1Text": "サービス名とブランドを保護します。",
-    "right2Title": "著作権",
-    "right2Text": "文章、映像、翻訳文、フレーズカードのコンテンツを保護します。",
-    "right3Title": "意匠",
-    "right3Text": "アプリ画面、製品外観、カードデザインを保護します。",
-    "right4Title": "実用新案",
-    "right4Text": "装置構造の実用的な改善を保護します。",
-    "right5Title": "特許候補",
-    "right5Text": "AIが分析し接続する処理の流れを検討します。",
-    "right6Title": "営業秘密",
-    "right6Text": "顧客DB、運営ノウハウ、パートナー条件は内部資産です。",
-    "footerSub": "BUFS学生起業サークル実習用の非公式教育アプリ",
-    "footerNotice": "本アプリは学生発表・教育用の例であり、医療判断、法律助言、投資勧誘を提供しません。",
-    "targetOptions": {
-      "foreignStudent": "外国人留学生",
-      "medicalTourist": "外国人医療観光客",
-      "busanTourist": "釜山を訪れる外国人観光客",
-      "kBeautyCustomer": "Kビューティー関心顧客",
-      "hospitalVisitor": "外国人病院訪問者",
-      "multiculturalFamily": "多文化家族・保護者"
-    },
-    "strengthOptions": {
-      "language": "外国語・翻訳",
-      "content": "映像・SNSコンテンツ",
-      "tourism": "観光コース企画",
-      "ai": "AIチャットボット・ノーコード",
-      "beauty": "Kビューティー理解"
-    },
-    "toolOptions": {
-      "chatbot": "AIチャットボット",
-      "webapp": "簡単なWebアプリ",
-      "form": "Googleフォーム＋自動案内文",
-      "map": "地図ベース案内ページ",
-      "cards": "多言語フレーズカード"
-    },
-    "resultHeads": [
-      "1. アイデア名",
-      "2. 一文定義",
-      "3. 発見した不便",
-      "4. 対象顧客と解決方法",
-      "5. 7日間MVP計画",
-      "6. アプリに入れる質問例",
-      "7. 権利化の方向",
-      "8. 注意事項",
-      "9. 30秒発表文",
-      "10. 今日すぐ行うこと"
-    ],
-    "targetPrefix": "対象",
-    "solutionPrefix": "解決",
-    "notProvided": "未入力"
-  },
-  "zh": {
-    "brandSub": "面向BUFS学生的创业实践AI",
-    "navMake": "生成想法",
-    "navWhy": "为什么需要",
-    "navExamples": "推荐项目",
-    "navRights": "权利保护",
-    "eyebrow": "外语 · 旅游 · AI · 多文化",
-    "heroTitle": "把一个不便<br>变成创业想法",
-    "heroLead": "输入留学生、釜山游客或医疗旅游客遇到的不便，AI会整理7天MVP计划、发表语句和知识产权方向。",
-    "ctaStart": "立即生成想法",
-    "ctaWhy": "查看用法",
-    "flow1Title": "发现不便",
-    "flow1Text": "外国朋友在医院、交通或学校遇到困难",
-    "flow2Title": "AI辅导",
-    "flow2Text": "生成问题定义、MVP和权利保护方向",
-    "flow3Title": "学生发表",
-    "flow3Text": "完成30秒演讲和7天行动计划",
-    "languageLabel": "语言",
-    "languageTitle": "选择语言后，页面和AI回答语言都会改变。",
-    "languageDesc": "学生可以用韩语、英语、越南语、日语、中文和阿拉伯语进行练习。",
-    "msgLabel": "核心信息",
-    "msgTitle": "创业不是为了奖金而做的发表。",
-    "msgText": "创业是发现某个人的不便，并把它变成客户可以信任的结构的过程。这个应用是让学生亲自体验这一过程的小礼物。",
-    "strengthLabel": "BUFS学生的优势",
-    "strengthTitle": "外语不是考试科目，而可以成为创业资产。",
-    "strength1": "接近外国留学生的真实现场",
-    "strength2": "多语言和文化理解能力",
-    "strength3": "釜山旅游和全球网络",
-    "strength4": "利用AI和无代码工具快速制作MVP",
-    "stepsLabel": "4步创业思考法",
-    "stepsTitle": "不便 → 小服务 → 名称 → 保护",
-    "step1Title": "寻找不便",
-    "step1Text": "观察外国朋友在学校、医院、餐厅、交通中遇到困难的时刻。",
-    "step2Title": "做小一点",
-    "step2Text": "先从Google表单、聊天机器人、地图页面、句子卡等小型MVP开始。",
-    "step3Title": "命名",
-    "step3Text": "用容易记住的服务名称和一句话说明，让想法更清晰。",
-    "step4Title": "考虑保护",
-    "step4Text": "名称可作为商标，内容可作为著作权，AI处理流程可作为专利候选整理。",
-    "builderTitle": "学生创业想法生成器",
-    "builderDesc": "输入学生看到的不便，AI会整理成适合发表的结构。",
-    "modeBadge": "Netlify + AI连接型",
-    "targetLabel": "这是谁的不便？",
-    "problemLabel": "你发现了什么不便？",
-    "problemPlaceholder": "例：刚到韩国的留学生在开银行账户、办理手机、去医院、使用交通卡方面遇到困难。",
-    "strengthFormLabel": "学生团队的优势是什么？",
-    "toolLabel": "第一个MVP用什么制作？",
-    "submitBtn": "用AI生成想法",
-    "copyBtn": "复制结果",
-    "emailBtn": "发送到负责人邮箱",
-    "emailSubject": "BUFS创业想法AI结果",
-    "emailIntro": "以下内容由 BUFS Startup Idea Builder AI 生成。",
-    "emailCopied": "结果已复制，并已打开邮件撰写窗口。请确认内容后发送。",
-    "emailNoResult": "请先生成AI结果。",
-    "resetBtn": "重置",
-    "apiNote": "如果没有设置API Key，会先显示示例结果。",
-    "resultTag": "AI结果",
-    "resultTitle": "发表用想法草案",
-    "emptyTitle": "请在左侧输入不便。",
-    "emptyText": "AI会生成想法名称、一句话定义、7天MVP计划、权利保护方向和30秒发表稿。",
-    "loadingTitle": "AI正在整理想法...",
-    "loadingText": "请稍等。",
-    "fallbackNote": "这是连接AI前的示例结果。在Netlify环境变量中添加OPENAI_API_KEY后，将显示真实AI回答。",
-    "aiNote": "AI连接结果",
-    "copied": "结果已复制。",
-    "copyFail": "复制失败。请手动选择内容并复制。",
-    "examplesLabel": "推荐项目 TOP 5",
-    "examplesTitle": "学生可以马上开始的想法",
-    "caseLabel": "Medi Hana案例",
-    "caseTitle": "把医疗旅游客的等待时间变成安全的停留体验",
-    "caseText": "Medi Hana Care Route AI不推荐医院，也不做医疗判断。它把医院访问前后的等待、休息、陪同家属停留问题，转化为安全路线引导。",
-    "caseFlow1": "客户问题",
-    "caseFlow2": "情况分析",
-    "caseFlow3": "旅游数据",
-    "caseFlow4": "停留路线",
-    "caseFlow5": "咨询连接",
-    "rightsLabel": "想法保护方法",
-    "rightsTitle": "不同资产需要不同的权利",
-    "right1Title": "商标",
-    "right1Text": "保护服务名称和品牌。",
-    "right2Title": "著作权",
-    "right2Text": "保护文章、视频、翻译文本和句子卡内容。",
-    "right3Title": "外观设计",
-    "right3Text": "保护应用界面、产品外观和卡片设计。",
-    "right4Title": "实用新型",
-    "right4Text": "保护设备结构的实用改进。",
-    "right5Title": "专利候选",
-    "right5Text": "审查AI分析和连接信息的处理流程。",
-    "right6Title": "商业秘密",
-    "right6Text": "客户数据库、运营诀窍和合作伙伴条件是内部资产。",
-    "footerSub": "BUFS学生创业社团实践用非官方教育应用",
-    "footerNotice": "本应用仅用于学生发表和教育示例，不提供医疗判断、法律建议或投资劝诱。",
-    "targetOptions": {
-      "foreignStudent": "外国留学生",
-      "medicalTourist": "外国医疗旅游客",
-      "busanTourist": "访问釜山的外国游客",
-      "kBeautyCustomer": "K-Beauty关注客户",
-      "hospitalVisitor": "外国医院访问者",
-      "multiculturalFamily": "多文化家庭/照护者"
-    },
-    "strengthOptions": {
-      "language": "外语与翻译",
-      "content": "视频与SNS内容",
-      "tourism": "旅游路线规划",
-      "ai": "AI聊天机器人与无代码",
-      "beauty": "K-Beauty理解"
-    },
-    "toolOptions": {
-      "chatbot": "AI聊天机器人",
-      "webapp": "简单网页应用",
-      "form": "Google表单 + 自动指南",
-      "map": "基于地图的指南页面",
-      "cards": "多语言句子卡"
-    },
-    "resultHeads": [
-      "1. 想法名称",
-      "2. 一句话定义",
-      "3. 发现的不便",
-      "4. 目标客户和解决方式",
-      "5. 7天MVP计划",
-      "6. 应用中的示例问题",
-      "7. 权利保护方向",
-      "8. 注意事项",
-      "9. 30秒发表语句",
-      "10. 今天马上要做的事"
-    ],
-    "targetPrefix": "对象",
-    "solutionPrefix": "解决",
-    "notProvided": "未输入"
-  },
-  "ar": {
-    "brandSub": "أداة تدريب على ريادة الأعمال لطلاب BUFS بالذكاء الاصطناعي",
-    "navMake": "اصنع فكرة",
-    "navWhy": "لماذا نحتاجها؟",
-    "navExamples": "أفكار مقترحة",
-    "navRights": "حماية الفكرة",
-    "eyebrow": "لغات · سياحة · ذكاء اصطناعي · تعدد ثقافات",
-    "heroTitle": "حوّل مشكلة صغيرة<br>إلى فكرة مشروع",
-    "heroLead": "اكتب مشكلة يواجهها الطلاب الدوليون أو زوار بوسان أو السياح العلاجيون. سيقوم الذكاء الاصطناعي بتنظيم خطة MVP لمدة 7 أيام، ونص عرض قصير، واتجاه حماية الفكرة.",
-    "ctaStart": "ابدأ إنشاء الفكرة",
-    "ctaWhy": "طريقة الاستخدام",
-    "flow1Title": "اكتشاف المشكلة",
-    "flow1Text": "صديق أجنبي يواجه صعوبة في المدرسة أو المستشفى أو المواصلات",
-    "flow2Title": "توجيه بالذكاء الاصطناعي",
-    "flow2Text": "تعريف المشكلة، MVP، واتجاه الحماية",
-    "flow3Title": "عرض الطالب",
-    "flow3Text": "عرض 30 ثانية وخطة عمل لمدة 7 أيام",
-    "languageLabel": "اللغة",
-    "languageTitle": "اختر اللغة لتغيير واجهة الصفحة ولغة إجابة الذكاء الاصطناعي.",
-    "languageDesc": "يمكن للطلاب التدريب بالكورية والإنجليزية والفيتنامية واليابانية والصينية والعربية.",
-    "msgLabel": "الرسالة الأساسية",
-    "msgTitle": "ريادة الأعمال ليست مجرد مسابقة للفوز بجائزة.",
-    "msgText": "تبدأ ريادة الأعمال عندما نكتشف مشكلة شخص ما ونحوّلها إلى نظام يمكن للعميل الوثوق به. هذا التطبيق هدية صغيرة ليختبر الطلاب هذه العملية بأنفسهم.",
-    "strengthLabel": "نقاط قوة طلاب BUFS",
-    "strengthTitle": "يمكن للغة الأجنبية أن تصبح أصلًا رياديًا.",
-    "strength1": "قرب من الطلاب الدوليين",
-    "strength2": "فهم متعدد اللغات والثقافات",
-    "strength3": "سياحة بوسان وشبكات عالمية",
-    "strength4": "إنشاء MVP سريع باستخدام AI وأدوات no-code",
-    "stepsLabel": "منهج التفكير في 4 خطوات",
-    "stepsTitle": "مشكلة → خدمة صغيرة → اسم → حماية",
-    "step1Title": "ابحث عن المشكلة",
-    "step1Text": "راقب اللحظات التي يتعثر فيها الأصدقاء الأجانب في المدرسة أو المستشفى أو المطعم أو المواصلات.",
-    "step2Title": "ابنِ بشكل صغير",
-    "step2Text": "ابدأ بـ MVP صغير مثل نموذج، روبوت محادثة، صفحة خريطة، أو بطاقات عبارات.",
-    "step3Title": "أعطِها اسمًا",
-    "step3Text": "اجعل الفكرة واضحة باسم خدمة سهل التذكر وشرح من جملة واحدة.",
-    "step4Title": "فكر في الحماية",
-    "step4Text": "الاسم علامة تجارية، المحتوى حق مؤلف، وتدفق معالجة AI يمكن مراجعته كمرشح براءة.",
-    "builderTitle": "مولد أفكار المشاريع الطلابية",
-    "builderDesc": "أدخل مشكلة لاحظتها، وسيقوم AI بتنظيمها في هيكل مناسب للعرض.",
-    "modeBadge": "Netlify + AI متصل",
-    "targetLabel": "مشكلة من هذه؟",
-    "problemLabel": "ما المشكلة التي لاحظتها؟",
-    "problemPlaceholder": "مثال: يواجه الطلاب الدوليون الجدد صعوبة في فتح حساب بنكي، تفعيل الهاتف، زيارة المستشفى، واستخدام بطاقة المواصلات.",
-    "strengthFormLabel": "ما قوة فريق الطلاب؟",
-    "toolLabel": "بماذا سنبني أول MVP؟",
-    "submitBtn": "أنشئ الفكرة بالذكاء الاصطناعي",
-    "copyBtn": "انسخ النتيجة",
-    "emailBtn": "أرسل إلى بريد المسؤول",
-    "emailSubject": "نتيجة AI لأفكار ريادة الأعمال في BUFS",
-    "emailIntro": "تم إنشاء المحتوى التالي بواسطة BUFS Startup Idea Builder AI.",
-    "emailCopied": "تم نسخ النتيجة وفتح نافذة كتابة البريد. يرجى مراجعة المحتوى ثم إرساله.",
-    "emailNoResult": "يرجى إنشاء نتيجة AI أولاً.",
-    "resetBtn": "إعادة ضبط",
-    "apiNote": "إذا لم يتم إعداد مفتاح API، سيتم عرض نتيجة نموذجية أولًا.",
-    "resultTag": "نتيجة AI",
-    "resultTitle": "مسودة فكرة جاهزة للعرض",
-    "emptyTitle": "اكتب المشكلة في الجهة اليسرى.",
-    "emptyText": "سيُنشئ AI اسم الفكرة، تعريفًا من جملة واحدة، خطة MVP لمدة 7 أيام، اتجاه الحماية، وعرضًا مدته 30 ثانية.",
-    "loadingTitle": "يقوم AI بتنظيم الفكرة...",
-    "loadingText": "يرجى الانتظار قليلًا.",
-    "fallbackNote": "هذه نتيجة نموذجية قبل الاتصال بالذكاء الاصطناعي. أضف OPENAI_API_KEY في متغيرات بيئة Netlify للحصول على رد AI حقيقي.",
-    "aiNote": "نتيجة AI المتصل",
-    "copied": "تم نسخ النتيجة.",
-    "copyFail": "فشل النسخ. يرجى تحديد النص ونسخه يدويًا.",
-    "examplesLabel": "أفضل 5 أفكار مقترحة",
-    "examplesTitle": "أفكار يمكن للطلاب البدء بها فورًا",
-    "caseLabel": "حالة Medi Hana",
-    "caseTitle": "تحويل وقت انتظار السائح العلاجي إلى مسار إقامة آمن",
-    "caseText": "Medi Hana Care Route AI لا يوصي بالمستشفيات ولا يقدم قرارات طبية. بل يحول الانتظار والراحة واحتياجات المرافقين والإقامة القصيرة إلى إرشاد لمسار آمن.",
-    "caseFlow1": "سؤال العميل",
-    "caseFlow2": "تحليل الحالة",
-    "caseFlow3": "بيانات سياحية",
-    "caseFlow4": "مسار إقامة",
-    "caseFlow5": "ربط بالاستشارة",
-    "rightsLabel": "طريقة حماية الأفكار",
-    "rightsTitle": "الأصول المختلفة تحتاج إلى حقوق مختلفة",
-    "right1Title": "علامة تجارية",
-    "right1Text": "تحمي أسماء الخدمات والعلامات.",
-    "right2Title": "حق المؤلف",
-    "right2Text": "يحمي النصوص والفيديو والترجمات ومحتوى بطاقات العبارات.",
-    "right3Title": "تصميم",
-    "right3Text": "يحمي شاشات التطبيق ومظهر المنتج وتصميم البطاقات.",
-    "right4Title": "نموذج منفعة",
-    "right4Text": "يحمي التحسينات العملية في بنية الأجهزة.",
-    "right5Title": "مرشح براءة",
-    "right5Text": "يراجع تدفق تحليل AI وربط المعلومات.",
-    "right6Title": "سر تجاري",
-    "right6Text": "قاعدة بيانات العملاء وخبرة التشغيل وشروط الشركاء أصول داخلية.",
-    "footerSub": "تطبيق تعليمي غير رسمي لتدريب طلاب BUFS على ريادة الأعمال",
-    "footerNotice": "هذا التطبيق مثال للتعليم والعروض الطلابية فقط، ولا يقدم حكمًا طبيًا أو نصيحة قانونية أو دعوة للاستثمار.",
-    "targetOptions": {
-      "foreignStudent": "طالب دولي",
-      "medicalTourist": "سائح علاجي أجنبي",
-      "busanTourist": "زائر أجنبي إلى بوسان",
-      "kBeautyCustomer": "عميل مهتم بـ K-beauty",
-      "hospitalVisitor": "زائر أجنبي للمستشفى",
-      "multiculturalFamily": "أسرة متعددة الثقافات/مرافق"
-    },
-    "strengthOptions": {
-      "language": "لغات وترجمة",
-      "content": "فيديو ومحتوى SNS",
-      "tourism": "تخطيط مسارات سياحية",
-      "ai": "روبوت AI وأدوات no-code",
-      "beauty": "معرفة K-beauty"
-    },
-    "toolOptions": {
-      "chatbot": "روبوت محادثة AI",
-      "webapp": "تطبيق ويب بسيط",
-      "form": "Google Form + دليل تلقائي",
-      "map": "صفحة إرشاد بالخريطة",
-      "cards": "بطاقات عبارات متعددة اللغات"
-    },
-    "resultHeads": [
-      "1. اسم الفكرة",
-      "2. تعريف من جملة واحدة",
-      "3. المشكلة المكتشفة",
-      "4. المستخدم المستهدف والحل",
-      "5. خطة MVP لمدة 7 أيام",
-      "6. أسئلة نموذجية للتطبيق",
-      "7. اتجاه حماية الحقوق",
-      "8. تنبيهات",
-      "9. عرض 30 ثانية",
-      "10. ما يجب فعله اليوم"
-    ],
-    "targetPrefix": "الهدف",
-    "solutionPrefix": "الحل",
-    "notProvided": "غير مذكور"
-  }
-};
-const targets = {
-  "foreignStudent": {
-    "pain": {
-      "ko": "입국 후 학교생활, 행정, 병원, 교통, 은행 업무를 낯선 언어로 처리해야 한다",
-      "en": "They must handle school life, administration, hospitals, transit, and banking in an unfamiliar language.",
-      "vi": "Họ phải xử lý đời sống trường học, hành chính, bệnh viện, giao thông và ngân hàng bằng ngôn ngữ chưa quen.",
-      "ja": "入国後、学校生活・行政手続き・病院・交通・銀行業務を慣れない言語で処理しなければなりません。",
-      "zh": "入境后，他们需要用不熟悉的语言处理学校生活、行政手续、医院、交通和银行业务。",
-      "ar": "يحتاجون إلى التعامل مع الحياة الجامعية والإجراءات والمستشفيات والمواصلات والبنوك بلغة غير مألوفة."
-    },
-    "names": [
-      "BUFS Global Helper",
-      "Campus Bridge AI",
-      "Global Student Mate"
-    ],
-    "pitchTarget": {
-      "ko": "한국에 처음 온 외국인 유학생",
-      "en": "international students newly arriving in Korea",
-      "vi": "du học sinh mới đến Hàn Quốc",
-      "ja": "韓国に来たばかりの外国人留学生",
-      "zh": "刚到韩国的外国留学生",
-      "ar": "الطلاب الدوليون الذين وصلوا حديثًا إلى كوريا"
+  ko: {
+    skip: "본문 바로가기",
+    brandSub: "창업지원단용 학생창업 접수·진단 플랫폼",
+    navApply: "아이디어 접수", navFlow: "운영 흐름", navCriteria: "진단 기준",
+    eyebrow: "AI · 학생창업 · 다국어 · 사업화",
+    heroTitle: "학생의 작은 문제 발견을<br>창업 가능성으로 연결합니다",
+    heroLead: "특정 산업에 치우치지 않고, 캠퍼스 생활·AI 서비스·콘텐츠·관광·교육·ESG·제품 아이디어까지 창업지원단이 실제로 접수하고 진단할 수 있도록 설계했습니다.",
+    ctaStart: "아이디어 진단 시작", ctaFlow: "운영 구조 보기",
+    heroCard1: "문제 입력", heroCard1t: "학생이 본 불편과 고객을 입력",
+    heroCard2: "5개 아이디어", heroCard2t: "AI가 분야별 창업 가능성 제안",
+    heroCard3: "지원 연계", heroCard3t: "멘토링·권리화·보육센터 트랙",
+    languageLabel: "언어 선택",
+    languageTitle: "학생과 외국인 유학생 모두 참여할 수 있게 다국어로 운영합니다.",
+    languageDesc: "화면과 AI 결과 언어가 함께 바뀝니다. 창업지원단은 다국어 접수 통로로 활용할 수 있습니다.",
+    flowLabel: "운영 흐름", flowTitle: "창업지원단이 실제로 쓰기 위한 접수·진단·연계 구조",
+    flow1: "다국어 접수", flow1t: "팀 정보, 분야, 문제, 고객, MVP 방식 입력",
+    flow2: "AI 1차 진단", flow2t: "5개 아이디어, 점수, 난이도, 수익모델 제안",
+    flow3: "메일 제출·링크", flow3t: "AI 진단 결과를 hotissue0@bufs.ac.kr로 제출하고 디지털 포트폴리오 링크를 생성",
+    flow4: "후속 지원", flow4t: "멘토링, 특허·상표 검토, 창업보육센터 연계",
+    builderTitle: "학생창업 아이디어 접수·진단",
+    builderDesc: "의료관광에 한정하지 않고, 모든 전공 학생의 창업 아이디어를 창업지원단 관점으로 진단합니다.",
+    teamLabel: "팀명", leaderLabel: "대표 학생 이름", departmentLabel: "학과/전공", emailLabel: "연락 이메일",
+    teamPlaceholder: "예: Global Bridge Team", leaderPlaceholder: "예: 홍길동", departmentPlaceholder: "예: 베트남어전공 / AI융합 / 관광 등", emailPlaceholder: "student@bufs.ac.kr",
+    categoryLabel: "아이디어 분야",
+    problemLabel: "해결하고 싶은 문제", problemPlaceholder: "예: 학생들이 교내 비교과, 장학, 진로 정보를 흩어진 공지에서 찾기 어려워합니다.",
+    customerLabel: "누가 가장 불편한가요?", customerPlaceholder: "예: 신입생, 외국인 유학생, 취업 준비생, 지역 소상공인",
+    limitLabel: "기존 해결 방식의 한계", limitPlaceholder: "예: 공지가 여러 페이지에 흩어져 있고, 개인 상황에 맞는 안내가 어렵습니다.",
+    ideaHintLabel: "이미 생각한 해결 아이디어가 있나요?", ideaHintPlaceholder: "없어도 됩니다. AI가 5개 방향을 제안합니다.",
+    strengthLabel: "우리 팀의 강점", mvpLabel: "첫 MVP 방식", supportLabel: "학교에 요청하고 싶은 지원",
+    consentText: "제출 아이디어는 학생/팀의 자산이며, 심사·멘토링 목적 열람에 동의합니다. 특허·상표 등 권리화는 별도 협의가 필요함을 이해합니다.",
+    generateBtn: "AI로 5개 아이디어 진단", pdfBtn: "메일 제출", resetBtn: "초기화",
+    apiNote: "실제 AI 응답은 Netlify 환경변수 OPENAI_API_KEY가 설정되어 있을 때 작동합니다.",
+    resultTag: "AI 진단 결과", resultTitle: "5개 창업 가능성",
+    emptyTitle: "왼쪽 양식을 입력해 보세요.", emptyText: "AI가 5개의 아이디어, 점수, MVP, 수익모델, 권리화 방향을 제시합니다.",
+    loadingTitle: "AI가 창업 가능성을 진단하고 있습니다...", loadingText: "5개 아이디어, 점수, 실행계획을 정리하는 중입니다.",
+    fallbackNote: "AI 연결 전 예시 결과입니다. Netlify 환경변수 OPENAI_API_KEY를 넣으면 실제 AI 응답으로 바뀝니다.",
+    aiNote: "AI 연결 결과", recommended: "AI 추천", option: "대안", score: "점수", difficulty: "난이도", mvp: "MVP", revenue: "수익모델", ip: "권리화", risk: "주의", selectIdea: "이 아이디어 선택",
+    selectedTitle: "선택 아이디어 상세", mailBtn: "창업지원단 메일 제출", linkBtn: "아이디어 링크 만들기", copyBtn: "결과 복사", copied: "복사했습니다.", copyFail: "복사에 실패했습니다.", mailNeedResult: "먼저 AI 진단 결과를 생성해 주세요.", linkMade: "아이디어 링크가 생성되었습니다.",
+    criteriaLabel: "진단 기준", criteriaTitle: "창업지원단 심사에 연결하기 쉬운 8개 기준", criteriaDescA: "학생 아이디어의 실행 가능성을 빠르게 확인합니다.", criteriaDescB: "후속 멘토링과 지원 연계 판단에 활용합니다.",
+    footerSub: "부산외대 창업지원단 활용을 가정한 학생창업 접수·진단 MVP", footerNote: "교육·제안용 MVP입니다. 실제 운영 시 개인정보처리방침, 권리 귀속 동의, 관리자 승인 절차가 필요합니다.",
+    mailSubject: "[BUFS Startup Bridge AI] 학생창업 아이디어 제출", mailTo: "hotissue0@bufs.ac.kr",
+    portfolioTitle: "학생창업 아이디어 링크", backHome: "앱으로 돌아가기", regNo: "접수번호", problemShort: "문제", teamShort: "팀", categoryShort: "분야", solutionShort: "해결", sevenDayMvp: "7일 MVP", fourWeekPlan: "4주 실행계획", interview: "고객 인터뷰", applicationEmailGreeting: "안녕하세요.", applicationEmailIntro: "BUFS Startup Bridge AI v2 아이디어를 제출합니다.", selectedIdeaLabel: "선택 아이디어", aiDiagnosis: "AI 진단 결과",
+    categoryOptions: { aiSoftware: "AI·소프트웨어 서비스", languageGlobal: "외국어·번역·다문화 서비스", tourismLocal: "관광·로컬·지역문제 해결", contentMedia: "콘텐츠·미디어·SNS 창업", education: "교육·학습·튜터링 서비스", beautyLifestyle: "K-뷰티·라이프스타일 상품", goodsProduct: "굿즈·제품·제조 아이디어", esgSocial: "ESG·사회문제 해결", campusLife: "캠퍼스 생활 불편 해결", healthWellness: "헬스케어·웰니스" },
+    strengthOptions: { language: "외국어·번역", content: "영상·SNS 콘텐츠", planning: "기획·리서치", development: "웹·앱·AI 제작", design: "디자인·브랜딩", network: "현장 네트워크" },
+    mvpOptions: { chatbot: "AI 챗봇", webapp: "간단한 웹앱", form: "구글폼+자동 안내", map: "지도 기반 안내", content: "SNS/영상 콘텐츠", prototype: "제품 콘셉트보드" },
+    supportOptions: { mentoring: "창업 멘토링", ip: "특허·상표 검토", space: "창업공간/보육센터", funding: "시제품·활동비", team: "팀원 매칭", education: "교육/특강" },
+    criteria: ["문제 명확성", "고객 검증 가능성", "부산외대 역량 적합성", "7일 MVP 가능성", "수익모델 가능성", "권리화 가능성", "윤리·법률 리스크", "창업지원 연계성"],
+    fallback: {
+      problem: "학생들이 겪는 불편",
+      names: ["캠퍼스 브릿지 AI", "학생 공지 파인더", "스마트 학생 도우미", "로컬 커넥트 랩", "학생 지원 데스크"],
+      oneLine: "입력한 문제를 작게 해결하는 학생창업 아이디어입니다.",
+      target: "부산외대 학생",
+      solution: "팀의 강점을 활용하여 선택한 MVP 방식으로 문제를 검증합니다.",
+      difficulty: ["쉬움", "쉬움", "보통", "보통", "높음"],
+      mvpPlan: ["1일차: 고객 5명 인터뷰", "2일차: 반복 질문 10개 정리", "3일차: MVP 화면 초안 제작", "4일차: 폼/챗봇/페이지 구현", "5일차: 사용자 테스트", "6일차: 수정", "7일차: 발표자료 완성"],
+      fourWeekPlan: ["1주차: 문제 검증", "2주차: MVP 제작", "3주차: 사용자 테스트", "4주차: 발표 및 지원 신청"],
+      interviewQuestions: ["가장 불편한 순간은 언제인가요?", "현재는 어떻게 해결하나요?", "이 문제가 해결되면 어떤 점이 좋아지나요?", "돈이나 시간을 절약할 가치가 있나요?", "가장 먼저 필요한 기능은 무엇인가요?"],
+      teamRoles: ["기획", "고객 인터뷰", "콘텐츠/디자인", "웹/AI 제작"],
+      revenueModel: ["학교·기관 제휴", "프리미엄 기능", "운영 대행"],
+      ipDirection: ["서비스명은 상표 후보", "콘텐츠는 저작권 관리", "AI 처리 흐름은 특허 후보 검토"],
+      risks: ["개인정보 최소 수집", "공식 정보는 출처 확인", "권리화 전 학생 동의 필요"],
+      recommend: "학교 안에서 바로 인터뷰와 MVP 테스트가 가능하며, 창업지원단 멘토링과 연결하기 쉽습니다.",
+      whyRecommended: "가장 빠르게 학교 안에서 검증할 수 있습니다.",
+      mentoringQuestions: ["가장 먼저 만날 고객 5명은 누구인가요?", "7일 안에 보여줄 수 있는 화면은 무엇인가요?", "개인정보나 법률 리스크는 없나요?"]
     }
   },
-  "medicalTourist": {
-    "pain": {
-      "ko": "병원 방문 전후에 어디서 쉬고 이동해야 할지 알기 어렵다",
-      "en": "They do not know where to rest or how to move before and after hospital visits.",
-      "vi": "Họ không biết nên nghỉ ở đâu và di chuyển thế nào trước và sau khi đến bệnh viện.",
-      "ja": "病院訪問の前後にどこで休み、どのように移動すればよいか分かりにくいです。",
-      "zh": "他们不知道医院访问前后该在哪里休息、如何移动。",
-      "ar": "لا يعرفون أين يستريحون أو كيف يتنقلون قبل زيارة المستشفى وبعدها."
-    },
-    "names": [
-      "Medi Hana Care Route AI",
-      "Safe Stay Route AI",
-      "Medi Companion Guide"
-    ],
-    "pitchTarget": {
-      "ko": "한국을 방문한 외국인 의료관광객",
-      "en": "foreign medical tourists visiting Korea",
-      "vi": "khách du lịch y tế nước ngoài đến Hàn Quốc",
-      "ja": "韓国を訪れる外国人医療観光客",
-      "zh": "访问韩国的外国医疗旅游客",
-      "ar": "السياح العلاجيون الأجانب الذين يزورون كوريا"
+
+  en: {
+    skip: "Skip to main content",
+    brandSub: "Student startup intake and diagnosis platform for the startup support office",
+    navApply: "Submit idea", navFlow: "Process", navCriteria: "Diagnosis criteria",
+    eyebrow: "AI · Student Startup · Multilingual · Commercialization",
+    heroTitle: "Turn student problem discovery<br>into startup potential",
+    heroLead: "Built for a startup support office to receive and diagnose ideas across campus life, AI services, content, tourism, education, ESG, and product concepts—not one narrow industry.",
+    ctaStart: "Start diagnosis", ctaFlow: "View process",
+    heroCard1: "Input problem", heroCard1t: "Students enter a pain point and target user",
+    heroCard2: "5 ideas", heroCard2t: "AI proposes startup possibilities by category",
+    heroCard3: "Support track", heroCard3t: "Mentoring, IP review, and incubation track",
+    languageLabel: "Language",
+    languageTitle: "Operate in multiple languages for both Korean and international students.",
+    languageDesc: "The interface and AI result language change together. The startup support office can use it as a multilingual intake channel.",
+    flowLabel: "Operating flow", flowTitle: "A practical intake, diagnosis, and support-linkage structure for the startup office",
+    flow1: "Multilingual intake", flow1t: "Enter team, category, problem, customer, and MVP type",
+    flow2: "AI first diagnosis", flow2t: "Suggest 5 ideas, scores, difficulty, and revenue models",
+    flow3: "Email submit · Link", flow3t: "Submit AI diagnosis to hotissue0@bufs.ac.kr and create a digital portfolio link",
+    flow4: "Follow-up support", flow4t: "Mentoring, patent/trademark review, and incubation linkage",
+    builderTitle: "Student startup idea intake and diagnosis",
+    builderDesc: "A general startup-support diagnosis tool for students of all majors, not limited to medical tourism.",
+    teamLabel: "Team name", leaderLabel: "Student leader", departmentLabel: "Department/Major", emailLabel: "Contact email",
+    teamPlaceholder: "Example: Global Bridge Team", leaderPlaceholder: "Example: Hong Gil-dong", departmentPlaceholder: "Example: Vietnamese / AI convergence / Tourism", emailPlaceholder: "student@bufs.ac.kr",
+    categoryLabel: "Idea category",
+    problemLabel: "Problem to solve", problemPlaceholder: "Example: Students struggle to find extracurricular programs, scholarships, and career notices because information is scattered.",
+    customerLabel: "Who feels this pain most?", customerPlaceholder: "Example: freshmen, international students, job seekers, local small businesses",
+    limitLabel: "Limits of current solutions", limitPlaceholder: "Example: Notices are scattered across pages and are not personalized.",
+    ideaHintLabel: "Do you already have a solution idea?", ideaHintPlaceholder: "Optional. AI will suggest five possible directions.",
+    strengthLabel: "Team strength", mvpLabel: "First MVP type", supportLabel: "Support needed from the school",
+    consentText: "I understand that the submitted idea belongs to the student/team, will be reviewed for screening and mentoring, and any IP ownership requires a separate agreement.",
+    generateBtn: "Diagnose 5 ideas with AI", pdfBtn: "Email submit", resetBtn: "Reset",
+    apiNote: "Actual AI output works when OPENAI_API_KEY is set in Netlify environment variables.",
+    resultTag: "AI diagnosis result", resultTitle: "5 startup possibilities",
+    emptyTitle: "Fill out the form on the left.", emptyText: "AI will suggest 5 ideas, scores, MVP, revenue model, and IP direction.",
+    loadingTitle: "AI is diagnosing startup potential...", loadingText: "Preparing 5 ideas, scores, and action plans.",
+    fallbackNote: "Sample result before AI connection. Add OPENAI_API_KEY in Netlify environment variables for real AI output.",
+    aiNote: "AI-connected result", recommended: "AI recommendation", option: "Option", score: "Score", difficulty: "Difficulty", mvp: "MVP", revenue: "Revenue model", ip: "IP direction", risk: "Caution", selectIdea: "Select this idea",
+    selectedTitle: "Selected idea detail", mailBtn: "Submit to startup office by email", linkBtn: "Create idea link", copyBtn: "Copy result", copied: "Copied.", copyFail: "Copy failed.", mailNeedResult: "Please generate an AI diagnosis result first.", linkMade: "Idea link has been created.",
+    criteriaLabel: "Diagnosis criteria", criteriaTitle: "8 criteria that connect easily to startup-office screening", criteriaDescA: "Quickly checks whether a student idea can be executed.", criteriaDescB: "Used to judge follow-up mentoring and support linkage.",
+    footerSub: "Student startup intake and diagnosis MVP designed for BUFS startup support", footerNote: "This is an educational/proposal MVP. Real operation requires a privacy policy, IP ownership consent, and admin approval process.",
+    mailSubject: "[BUFS Startup Bridge AI] Student startup idea submission", mailTo: "hotissue0@bufs.ac.kr",
+    portfolioTitle: "Student startup idea link", backHome: "Back to app", regNo: "Application ID", problemShort: "Problem", teamShort: "Team", categoryShort: "Category", solutionShort: "Solution", sevenDayMvp: "7-day MVP", fourWeekPlan: "4-week plan", interview: "Customer interview", applicationEmailGreeting: "Hello.", applicationEmailIntro: "I am submitting a BUFS Startup Bridge AI v2 idea.", selectedIdeaLabel: "Selected idea", aiDiagnosis: "AI diagnosis result",
+    categoryOptions: { aiSoftware: "AI/software service", languageGlobal: "Language/translation/multicultural service", tourismLocal: "Tourism/local problem solution", contentMedia: "Content/media/SNS startup", education: "Education/learning/tutoring service", beautyLifestyle: "K-beauty/lifestyle product", goodsProduct: "Goods/product/manufacturing idea", esgSocial: "ESG/social problem solution", campusLife: "Campus life problem solution", healthWellness: "Healthcare/wellness" },
+    strengthOptions: { language: "Language/translation", content: "Video/SNS content", planning: "Planning/research", development: "Web/app/AI building", design: "Design/branding", network: "Field network" },
+    mvpOptions: { chatbot: "AI chatbot", webapp: "Simple web app", form: "Google Form + auto guide", map: "Map-based guide", content: "SNS/video content", prototype: "Product concept board" },
+    supportOptions: { mentoring: "Startup mentoring", ip: "Patent/trademark review", space: "Startup space/incubation", funding: "Prototype/activity fund", team: "Team matching", education: "Training/lecture" },
+    criteria: ["Problem clarity", "Customer validation potential", "Fit with BUFS strengths", "7-day MVP feasibility", "Revenue model potential", "IP review potential", "Ethical/legal risk", "Startup support linkage"],
+    fallback: {
+      problem: "a student pain point", names: ["Campus Bridge AI", "Student Notice Finder", "Smart Student Mate", "Local Connect Lab", "Student Support Desk"], oneLine: "A student startup idea that solves the entered problem in a small and testable way.", target: "BUFS students", solution: "Use the team’s strengths to validate the problem through the selected MVP type.", difficulty: ["Easy", "Easy", "Medium", "Medium", "Hard"],
+      mvpPlan: ["Day 1: Interview 5 users", "Day 2: Organize 10 repeated questions", "Day 3: Draft the MVP screen", "Day 4: Build a form/chatbot/page", "Day 5: Run user testing", "Day 6: Revise", "Day 7: Complete pitch materials"],
+      fourWeekPlan: ["Week 1: Validate the problem", "Week 2: Build the MVP", "Week 3: Test with users", "Week 4: Pitch and apply for support"],
+      interviewQuestions: ["When is the most inconvenient moment?", "How do you solve it now?", "What would improve if this were solved?", "Is it worth saving money or time?", "What is the first feature you need?"],
+      teamRoles: ["Planning", "Customer interview", "Content/design", "Web/AI build"], revenueModel: ["School/institution partnership", "Premium feature", "Operation outsourcing"], ipDirection: ["Service name as trademark candidate", "Content managed by copyright", "AI process flow as patent-review candidate"], risks: ["Minimize personal data", "Check official sources", "Student consent required before IP filing"], recommend: "It can be interviewed and tested on campus quickly and is easy to connect to startup-office mentoring.", whyRecommended: "It is the fastest to validate within campus.", mentoringQuestions: ["Who are the first 5 customers to meet?", "What screen can be shown within 7 days?", "Are there privacy or legal risks?"]
     }
   },
-  "busanTourist": {
-    "pain": {
-      "ko": "맛집, 교통, 포토존, 짐 보관, 동선 선택을 자기 언어로 쉽게 알기 어렵다",
-      "en": "It is hard to choose restaurants, transit, photo spots, luggage storage, and routes in their own language.",
-      "vi": "Khó chọn quán ăn, giao thông, điểm chụp ảnh, nơi giữ hành lý và tuyến đi bằng ngôn ngữ của họ.",
-      "ja": "飲食店、交通、フォトスポット、荷物保管、動線選択を自分の言語で簡単に知ることが難しいです。",
-      "zh": "他们很难用自己的语言了解餐厅、交通、拍照点、行李寄存和路线选择。",
-      "ar": "يصعب عليهم اختيار المطاعم والمواصلات ومواقع التصوير وحفظ الأمتعة والمسارات بلغتهم."
-    },
-    "names": [
-      "Busan Easy Trip AI",
-      "B-Route Mate",
-      "Global Busan Guide"
-    ],
-    "pitchTarget": {
-      "ko": "부산을 처음 방문한 외국인 관광객",
-      "en": "foreign tourists visiting Busan for the first time",
-      "vi": "khách nước ngoài lần đầu đến Busan",
-      "ja": "釜山を初めて訪れる外国人観光客",
-      "zh": "第一次访问釜山的外国游客",
-      "ar": "السياح الأجانب الذين يزورون بوسان لأول مرة"
+
+  vi: {
+    skip: "Bỏ qua đến nội dung chính",
+    brandSub: "Nền tảng tiếp nhận và chẩn đoán ý tưởng khởi nghiệp sinh viên cho bộ phận hỗ trợ khởi nghiệp",
+    navApply: "Nộp ý tưởng", navFlow: "Quy trình", navCriteria: "Tiêu chí chẩn đoán",
+    eyebrow: "AI · Khởi nghiệp sinh viên · Đa ngôn ngữ · Thương mại hóa",
+    heroTitle: "Biến một vấn đề sinh viên phát hiện<br>thành cơ hội khởi nghiệp",
+    heroLead: "Được thiết kế để bộ phận hỗ trợ khởi nghiệp có thể tiếp nhận và chẩn đoán ý tưởng ở nhiều lĩnh vực như đời sống campus, dịch vụ AI, nội dung, du lịch, giáo dục, ESG và sản phẩm, không thiên về một ngành riêng lẻ.",
+    ctaStart: "Bắt đầu chẩn đoán", ctaFlow: "Xem quy trình",
+    heroCard1: "Nhập vấn đề", heroCard1t: "Sinh viên nhập bất tiện và khách hàng mục tiêu",
+    heroCard2: "5 ý tưởng", heroCard2t: "AI đề xuất khả năng khởi nghiệp theo lĩnh vực",
+    heroCard3: "Kết nối hỗ trợ", heroCard3t: "Mentoring, xem xét quyền SHTT và vườn ươm",
+    languageLabel: "Ngôn ngữ",
+    languageTitle: "Vận hành đa ngôn ngữ để cả sinh viên Hàn Quốc và du học sinh đều tham gia được.",
+    languageDesc: "Ngôn ngữ giao diện và kết quả AI thay đổi cùng nhau. Bộ phận hỗ trợ khởi nghiệp có thể dùng như kênh tiếp nhận đa ngôn ngữ.",
+    flowLabel: "Quy trình vận hành", flowTitle: "Cấu trúc tiếp nhận, chẩn đoán và liên kết hỗ trợ có thể dùng thực tế",
+    flow1: "Tiếp nhận đa ngôn ngữ", flow1t: "Nhập thông tin nhóm, lĩnh vực, vấn đề, khách hàng và MVP",
+    flow2: "Chẩn đoán AI lần 1", flow2t: "Đề xuất 5 ý tưởng, điểm số, độ khó và mô hình doanh thu",
+    flow3: "Gửi email · Liên kết", flow3t: "Gửi kết quả chẩn đoán AI đến hotissue0@bufs.ac.kr và tạo liên kết portfolio số",
+    flow4: "Hỗ trợ tiếp theo", flow4t: "Mentoring, xem xét sáng chế/nhãn hiệu và kết nối vườn ươm",
+    builderTitle: "Tiếp nhận và chẩn đoán ý tưởng khởi nghiệp sinh viên",
+    builderDesc: "Công cụ chẩn đoán chung cho sinh viên mọi chuyên ngành, không giới hạn ở du lịch y tế.",
+    teamLabel: "Tên nhóm", leaderLabel: "Tên trưởng nhóm", departmentLabel: "Khoa/Chuyên ngành", emailLabel: "Email liên hệ",
+    teamPlaceholder: "Ví dụ: Global Bridge Team", leaderPlaceholder: "Ví dụ: Nguyễn Văn A", departmentPlaceholder: "Ví dụ: Tiếng Việt / AI hội tụ / Du lịch", emailPlaceholder: "student@bufs.ac.kr",
+    categoryLabel: "Lĩnh vực ý tưởng",
+    problemLabel: "Vấn đề muốn giải quyết", problemPlaceholder: "Ví dụ: Sinh viên khó tìm chương trình ngoại khóa, học bổng và thông tin nghề nghiệp vì thông báo bị phân tán.",
+    customerLabel: "Ai gặp bất tiện này nhiều nhất?", customerPlaceholder: "Ví dụ: tân sinh viên, du học sinh, sinh viên chuẩn bị việc làm, cửa hàng địa phương",
+    limitLabel: "Hạn chế của cách giải quyết hiện tại", limitPlaceholder: "Ví dụ: thông tin nằm rải rác ở nhiều trang và chưa được cá nhân hóa.",
+    ideaHintLabel: "Bạn đã có ý tưởng giải pháp chưa?", ideaHintPlaceholder: "Không bắt buộc. AI sẽ đề xuất 5 hướng.",
+    strengthLabel: "Thế mạnh của nhóm", mvpLabel: "Hình thức MVP đầu tiên", supportLabel: "Hỗ trợ muốn nhận từ trường",
+    consentText: "Tôi hiểu rằng ý tưởng đã nộp thuộc về sinh viên/nhóm, được xem xét cho mục đích sàng lọc và mentoring, và quyền SHTT cần thỏa thuận riêng.",
+    generateBtn: "AI chẩn đoán 5 ý tưởng", pdfBtn: "Gửi email", resetBtn: "Làm lại",
+    apiNote: "Kết quả AI thực tế hoạt động khi OPENAI_API_KEY được thiết lập trong biến môi trường Netlify.",
+    resultTag: "Kết quả chẩn đoán AI", resultTitle: "5 khả năng khởi nghiệp",
+    emptyTitle: "Hãy điền biểu mẫu bên trái.", emptyText: "AI sẽ đề xuất 5 ý tưởng, điểm số, MVP, mô hình doanh thu và hướng bảo hộ quyền.",
+    loadingTitle: "AI đang chẩn đoán khả năng khởi nghiệp...", loadingText: "Đang chuẩn bị 5 ý tưởng, điểm số và kế hoạch hành động.",
+    fallbackNote: "Đây là kết quả mẫu trước khi kết nối AI. Hãy thêm OPENAI_API_KEY vào biến môi trường Netlify để nhận kết quả AI thực tế.",
+    aiNote: "Kết quả đã kết nối AI", recommended: "AI đề xuất", option: "Phương án", score: "Điểm", difficulty: "Độ khó", mvp: "MVP", revenue: "Mô hình doanh thu", ip: "Hướng SHTT", risk: "Lưu ý", selectIdea: "Chọn ý tưởng này",
+    selectedTitle: "Chi tiết ý tưởng đã chọn", mailBtn: "Gửi email cho bộ phận khởi nghiệp", linkBtn: "Tạo liên kết ý tưởng", copyBtn: "Sao chép kết quả", copied: "Đã sao chép.", copyFail: "Sao chép thất bại.", mailNeedResult: "Vui lòng tạo kết quả chẩn đoán AI trước.", linkMade: "Liên kết ý tưởng đã được tạo.",
+    criteriaLabel: "Tiêu chí chẩn đoán", criteriaTitle: "8 tiêu chí dễ kết nối với sàng lọc của bộ phận khởi nghiệp", criteriaDescA: "Nhanh chóng kiểm tra khả năng thực hiện của ý tưởng sinh viên.", criteriaDescB: "Dùng để đánh giá mentoring và liên kết hỗ trợ tiếp theo.",
+    footerSub: "MVP tiếp nhận và chẩn đoán ý tưởng sinh viên cho hỗ trợ khởi nghiệp BUFS", footerNote: "Đây là MVP phục vụ giáo dục/đề xuất. Khi vận hành thực tế cần chính sách bảo mật, đồng ý về quyền SHTT và quy trình phê duyệt quản trị.",
+    mailSubject: "[BUFS Startup Bridge AI] Nộp ý tưởng khởi nghiệp sinh viên", mailTo: "hotissue0@bufs.ac.kr",
+    portfolioTitle: "Liên kết ý tưởng khởi nghiệp sinh viên", backHome: "Quay lại ứng dụng", regNo: "Mã tiếp nhận", problemShort: "Vấn đề", teamShort: "Nhóm", categoryShort: "Lĩnh vực", solutionShort: "Giải pháp", sevenDayMvp: "MVP 7 ngày", fourWeekPlan: "Kế hoạch 4 tuần", interview: "Phỏng vấn khách hàng", applicationEmailGreeting: "Xin chào.", applicationEmailIntro: "Tôi xin nộp ý tưởng từ BUFS Startup Bridge AI v2.", selectedIdeaLabel: "Ý tưởng đã chọn", aiDiagnosis: "Kết quả chẩn đoán AI",
+    categoryOptions: { aiSoftware: "Dịch vụ AI/phần mềm", languageGlobal: "Dịch vụ ngoại ngữ/biên dịch/đa văn hóa", tourismLocal: "Giải pháp du lịch/vấn đề địa phương", contentMedia: "Khởi nghiệp nội dung/truyền thông/SNS", education: "Dịch vụ giáo dục/học tập/gia sư", beautyLifestyle: "Sản phẩm K-beauty/lifestyle", goodsProduct: "Ý tưởng goods/sản phẩm/sản xuất", esgSocial: "Giải pháp ESG/vấn đề xã hội", campusLife: "Giải quyết bất tiện đời sống campus", healthWellness: "Chăm sóc sức khỏe/wellness" },
+    strengthOptions: { language: "Ngoại ngữ/biên dịch", content: "Nội dung video/SNS", planning: "Lập kế hoạch/nghiên cứu", development: "Xây dựng web/app/AI", design: "Thiết kế/branding", network: "Mạng lưới hiện trường" },
+    mvpOptions: { chatbot: "Chatbot AI", webapp: "Web app đơn giản", form: "Google Form + hướng dẫn tự động", map: "Hướng dẫn dựa trên bản đồ", content: "Nội dung SNS/video", prototype: "Bảng concept sản phẩm" },
+    supportOptions: { mentoring: "Mentoring khởi nghiệp", ip: "Xem xét sáng chế/nhãn hiệu", space: "Không gian khởi nghiệp/vườn ươm", funding: "Kinh phí prototype/hoạt động", team: "Kết nối thành viên nhóm", education: "Đào tạo/chuyên đề" },
+    criteria: ["Độ rõ của vấn đề", "Khả năng kiểm chứng khách hàng", "Phù hợp với thế mạnh BUFS", "Khả năng MVP trong 7 ngày", "Tiềm năng mô hình doanh thu", "Tiềm năng xem xét SHTT", "Rủi ro đạo đức/pháp lý", "Khả năng liên kết hỗ trợ khởi nghiệp"],
+    fallback: {
+      problem: "một bất tiện của sinh viên", names: ["Campus Bridge AI", "Công cụ tìm thông báo sinh viên", "Trợ lý sinh viên thông minh", "Local Connect Lab", "Bàn hỗ trợ sinh viên"], oneLine: "Ý tưởng khởi nghiệp sinh viên giúp giải quyết vấn đề đã nhập theo cách nhỏ và có thể kiểm chứng.", target: "Sinh viên BUFS", solution: "Tận dụng thế mạnh của nhóm để kiểm chứng vấn đề bằng hình thức MVP đã chọn.", difficulty: ["Dễ", "Dễ", "Trung bình", "Trung bình", "Khó"],
+      mvpPlan: ["Ngày 1: Phỏng vấn 5 người dùng", "Ngày 2: Tổng hợp 10 câu hỏi lặp lại", "Ngày 3: Phác thảo màn hình MVP", "Ngày 4: Xây dựng form/chatbot/trang", "Ngày 5: Thử nghiệm với người dùng", "Ngày 6: Chỉnh sửa", "Ngày 7: Hoàn thành tài liệu trình bày"],
+      fourWeekPlan: ["Tuần 1: Kiểm chứng vấn đề", "Tuần 2: Xây dựng MVP", "Tuần 3: Thử nghiệm với người dùng", "Tuần 4: Trình bày và xin hỗ trợ"],
+      interviewQuestions: ["Khoảnh khắc bất tiện nhất là khi nào?", "Hiện tại bạn giải quyết như thế nào?", "Nếu vấn đề được giải quyết thì điều gì tốt hơn?", "Có đáng để tiết kiệm tiền hoặc thời gian không?", "Tính năng đầu tiên cần có là gì?"],
+      teamRoles: ["Lập kế hoạch", "Phỏng vấn khách hàng", "Nội dung/thiết kế", "Xây dựng web/AI"], revenueModel: ["Hợp tác với trường/tổ chức", "Tính năng premium", "Dịch vụ vận hành thay mặt"], ipDirection: ["Tên dịch vụ là ứng viên nhãn hiệu", "Nội dung được quản lý bằng quyền tác giả", "Luồng xử lý AI là ứng viên xem xét sáng chế"], risks: ["Tối thiểu hóa dữ liệu cá nhân", "Kiểm tra nguồn thông tin chính thức", "Cần đồng ý của sinh viên trước khi nộp SHTT"], recommend: "Có thể phỏng vấn và thử nghiệm nhanh trong campus, dễ kết nối mentoring của bộ phận khởi nghiệp.", whyRecommended: "Có thể kiểm chứng nhanh nhất trong trường.", mentoringQuestions: ["5 khách hàng đầu tiên cần gặp là ai?", "Màn hình nào có thể cho xem trong 7 ngày?", "Có rủi ro dữ liệu cá nhân hoặc pháp lý không?"]
     }
   },
-  "kBeautyCustomer": {
-    "pain": {
-      "ko": "피부 타입, 기후, 제품 사용 순서, 예산에 맞는 안내를 자기 언어로 받기 어렵다",
-      "en": "They struggle to receive guidance by skin type, climate, product order, and budget in their own language.",
-      "vi": "Khó nhận hướng dẫn theo loại da, khí hậu, thứ tự dùng sản phẩm và ngân sách bằng ngôn ngữ của họ.",
-      "ja": "肌タイプ、気候、使用順序、予算に合う案内を自分の言語で受けにくいです。",
-      "zh": "他们很难用自己的语言获得按肤质、气候、产品顺序和预算定制的说明。",
-      "ar": "يصعب عليهم الحصول على إرشاد بلغتهم حسب نوع البشرة والمناخ وترتيب المنتجات والميزانية."
-    },
-    "names": [
-      "K-Beauty Fit AI",
-      "Glow Korea Guide",
-      "Skin Route AI"
-    ],
-    "pitchTarget": {
-      "ko": "K-뷰티에 관심 있는 외국인 고객",
-      "en": "foreign customers interested in K-beauty",
-      "vi": "khách nước ngoài quan tâm đến K-beauty",
-      "ja": "Kビューティーに関心のある外国人顧客",
-      "zh": "对K-Beauty感兴趣的外国客户",
-      "ar": "العملاء الأجانب المهتمون بـ K-beauty"
+
+  ja: {
+    skip: "本文へスキップ",
+    brandSub: "起業支援部署向け学生起業アイデア受付・診断プラットフォーム",
+    navApply: "アイデア受付", navFlow: "運営フロー", navCriteria: "診断基準",
+    eyebrow: "AI · 学生起業 · 多言語 · 事業化",
+    heroTitle: "学生が見つけた小さな課題を<br>起業可能性へつなげます",
+    heroLead: "特定産業に偏らず、キャンパス生活、AIサービス、コンテンツ、観光、教育、ESG、製品アイデアまで、起業支援部署が実際に受付・診断できるよう設計しました。",
+    ctaStart: "診断を開始", ctaFlow: "運営構造を見る",
+    heroCard1: "課題入力", heroCard1t: "学生が見た不便と顧客を入力",
+    heroCard2: "5つのアイデア", heroCard2t: "AIが分野別の起業可能性を提案",
+    heroCard3: "支援連携", heroCard3t: "メンタリング・権利化・インキュベーション連携",
+    languageLabel: "言語選択",
+    languageTitle: "韓国人学生と外国人留学生の両方が参加できる多言語運営です。",
+    languageDesc: "画面とAI結果の言語が同時に変わります。起業支援部署は多言語受付チャネルとして活用できます。",
+    flowLabel: "運営フロー", flowTitle: "起業支援部署が実際に使える受付・診断・支援連携構造",
+    flow1: "多言語受付", flow1t: "チーム情報、分野、課題、顧客、MVP方式を入力",
+    flow2: "AI一次診断", flow2t: "5つのアイデア、点数、難易度、収益モデルを提案",
+    flow3: "メール提出・リンク", flow3t: "AI診断結果をhotissue0@bufs.ac.krへ提出し、デジタルポートフォリオリンクを生成",
+    flow4: "後続支援", flow4t: "メンタリング、特許・商標レビュー、インキュベーション連携",
+    builderTitle: "学生起業アイデア受付・診断",
+    builderDesc: "医療観光に限定せず、全専攻学生の起業アイデアを起業支援部署の視点で診断します。",
+    teamLabel: "チーム名", leaderLabel: "代表学生名", departmentLabel: "学科/専攻", emailLabel: "連絡メール",
+    teamPlaceholder: "例: Global Bridge Team", leaderPlaceholder: "例: 山田太郎", departmentPlaceholder: "例: ベトナム語専攻 / AI融合 / 観光", emailPlaceholder: "student@bufs.ac.kr",
+    categoryLabel: "アイデア分野",
+    problemLabel: "解決したい課題", problemPlaceholder: "例: 学生が比較科目、奨学金、進路情報を散らばった告知から探しにくい。",
+    customerLabel: "誰が最も不便を感じますか？", customerPlaceholder: "例: 新入生、外国人留学生、就職準備生、地域の小規模事業者",
+    limitLabel: "既存の解決方法の限界", limitPlaceholder: "例: 告知が複数ページに散らばり、個人状況に合わせた案内が難しい。",
+    ideaHintLabel: "すでに考えた解決アイデアはありますか？", ideaHintPlaceholder: "なくても構いません。AIが5つの方向を提案します。",
+    strengthLabel: "チームの強み", mvpLabel: "最初のMVP方式", supportLabel: "学校に求めたい支援",
+    consentText: "提出したアイデアは学生/チームの資産であり、審査・メンタリング目的の閲覧に同意します。知的財産権の帰属は別途協議が必要であることを理解します。",
+    generateBtn: "AIで5つのアイデアを診断", pdfBtn: "メール提出", resetBtn: "リセット",
+    apiNote: "実際のAI応答はNetlify環境変数OPENAI_API_KEYが設定されている場合に動作します。",
+    resultTag: "AI診断結果", resultTitle: "5つの起業可能性",
+    emptyTitle: "左側のフォームを入力してください。", emptyText: "AIが5つのアイデア、点数、MVP、収益モデル、権利化方向を提示します。",
+    loadingTitle: "AIが起業可能性を診断しています...", loadingText: "5つのアイデア、点数、実行計画を整理中です。",
+    fallbackNote: "AI接続前のサンプル結果です。Netlify環境変数OPENAI_API_KEYを追加すると実際のAI応答に変わります。",
+    aiNote: "AI接続結果", recommended: "AI推薦", option: "代案", score: "点数", difficulty: "難易度", mvp: "MVP", revenue: "収益モデル", ip: "権利化", risk: "注意", selectIdea: "このアイデアを選択",
+    selectedTitle: "選択アイデア詳細", mailBtn: "起業支援部署へメール提出", linkBtn: "アイデアリンク作成", copyBtn: "結果をコピー", copied: "コピーしました。", copyFail: "コピーに失敗しました。", mailNeedResult: "先にAI診断結果を生成してください。", linkMade: "アイデアリンクが生成されました。",
+    criteriaLabel: "診断基準", criteriaTitle: "起業支援部署の審査につなげやすい8つの基準", criteriaDescA: "学生アイデアの実行可能性を素早く確認します。", criteriaDescB: "後続メンタリングと支援連携の判断に活用します。",
+    footerSub: "BUFS起業支援での活用を想定した学生起業受付・診断MVP", footerNote: "教育・提案用MVPです。実運営時にはプライバシーポリシー、権利帰属同意、管理者承認手続きが必要です。",
+    mailSubject: "[BUFS Startup Bridge AI] 学生起業アイデア提出", mailTo: "hotissue0@bufs.ac.kr",
+    portfolioTitle: "学生起業アイデアリンク", backHome: "アプリに戻る", regNo: "受付番号", problemShort: "課題", teamShort: "チーム", categoryShort: "分野", solutionShort: "解決", sevenDayMvp: "7日MVP", fourWeekPlan: "4週間実行計画", interview: "顧客インタビュー", applicationEmailGreeting: "こんにちは。", applicationEmailIntro: "BUFS Startup Bridge AI v2のアイデアを提出します。", selectedIdeaLabel: "選択アイデア", aiDiagnosis: "AI診断結果",
+    categoryOptions: { aiSoftware: "AI・ソフトウェアサービス", languageGlobal: "外国語・翻訳・多文化サービス", tourismLocal: "観光・ローカル課題解決", contentMedia: "コンテンツ・メディア・SNS起業", education: "教育・学習・チュータリングサービス", beautyLifestyle: "Kビューティー・ライフスタイル商品", goodsProduct: "グッズ・製品・製造アイデア", esgSocial: "ESG・社会課題解決", campusLife: "キャンパス生活の不便解決", healthWellness: "ヘルスケア・ウェルネス" },
+    strengthOptions: { language: "外国語・翻訳", content: "動画・SNSコンテンツ", planning: "企画・リサーチ", development: "Web・アプリ・AI制作", design: "デザイン・ブランディング", network: "現場ネットワーク" },
+    mvpOptions: { chatbot: "AIチャットボット", webapp: "簡単なWebアプリ", form: "Googleフォーム+自動案内", map: "地図ベース案内", content: "SNS/動画コンテンツ", prototype: "製品コンセプトボード" },
+    supportOptions: { mentoring: "起業メンタリング", ip: "特許・商標レビュー", space: "起業スペース/インキュベーション", funding: "試作品・活動費", team: "チームメンバー マッチング", education: "教育/特講" },
+    criteria: ["課題の明確性", "顧客検証可能性", "BUFSの強みとの適合性", "7日MVP可能性", "収益モデル可能性", "権利化レビュー可能性", "倫理・法的リスク", "起業支援連携性"],
+    fallback: {
+      problem: "学生が感じる不便", names: ["キャンパスブリッジAI", "学生告知ファインダー", "スマート学生メイト", "ローカルコネクトラボ", "学生支援デスク"], oneLine: "入力された課題を小さく検証可能な形で解決する学生起業アイデアです。", target: "BUFS学生", solution: "チームの強みを活用し、選択したMVP方式で課題を検証します。", difficulty: ["易しい", "易しい", "普通", "普通", "難しい"],
+      mvpPlan: ["1日目: ユーザー5名にインタビュー", "2日目: 繰り返し出る質問10個を整理", "3日目: MVP画面案を作成", "4日目: フォーム/チャットボット/ページを構築", "5日目: ユーザーテスト", "6日目: 修正", "7日目: 発表資料を完成"],
+      fourWeekPlan: ["1週目: 課題検証", "2週目: MVP制作", "3週目: ユーザーテスト", "4週目: 発表・支援申請"],
+      interviewQuestions: ["最も不便な瞬間はいつですか？", "現在はどのように解決していますか？", "解決されると何が良くなりますか？", "お金や時間を節約する価値がありますか？", "最初に必要な機能は何ですか？"],
+      teamRoles: ["企画", "顧客インタビュー", "コンテンツ/デザイン", "Web/AI制作"], revenueModel: ["学校・機関連携", "プレミアム機能", "運営代行"], ipDirection: ["サービス名は商標候補", "コンテンツは著作権管理", "AI処理フローは特許候補として検討"], risks: ["個人情報を最小限に収集", "公式情報の出典を確認", "権利化前に学生の同意が必要"], recommend: "学内で素早くインタビューとMVPテストができ、起業支援部署のメンタリングにつなげやすいです。", whyRecommended: "学内で最も早く検証できます。", mentoringQuestions: ["最初に会う顧客5名は誰ですか？", "7日以内に見せられる画面は何ですか？", "個人情報や法的リスクはありませんか？"]
     }
   },
-  "hospitalVisitor": {
-    "pain": {
-      "ko": "증상, 통증, 알레르기, 복용약을 병원에서 정확히 전달하기 어렵다",
-      "en": "They cannot easily explain symptoms, pain, allergies, and medications at the hospital.",
-      "vi": "Họ khó trình bày chính xác triệu chứng, mức đau, dị ứng và thuốc đang dùng tại bệnh viện.",
-      "ja": "病院で症状、痛み、アレルギー、服用薬を正確に伝えることが難しいです。",
-      "zh": "他们很难在医院准确表达症状、疼痛、过敏和正在服用的药物。",
-      "ar": "يصعب عليهم شرح الأعراض والألم والحساسية والأدوية بدقة في المستشفى."
-    },
-    "names": [
-      "Hospital Phrase Card",
-      "Medi Talk Card",
-      "Safe Visit Card"
-    ],
-    "pitchTarget": {
-      "ko": "한국 병원을 방문하는 외국인",
-      "en": "foreigners visiting hospitals in Korea",
-      "vi": "người nước ngoài đến bệnh viện tại Hàn Quốc",
-      "ja": "韓国の病院を訪れる外国人",
-      "zh": "访问韩国医院的外国人",
-      "ar": "الأجانب الذين يزورون المستشفيات في كوريا"
+
+  zh: {
+    skip: "跳到主要内容",
+    brandSub: "面向创业支援部门的学生创业想法接收与诊断平台",
+    navApply: "提交想法", navFlow: "运营流程", navCriteria: "诊断标准",
+    eyebrow: "AI · 学生创业 · 多语言 · 商业化",
+    heroTitle: "把学生发现的小问题<br>连接为创业可能性",
+    heroLead: "本平台不偏向某一产业，而是让创业支援部门能够接收并诊断校园生活、AI服务、内容、旅游、教育、ESG和产品等多领域想法。",
+    ctaStart: "开始诊断", ctaFlow: "查看运营结构",
+    heroCard1: "输入问题", heroCard1t: "学生输入发现的不便和目标用户",
+    heroCard2: "5个想法", heroCard2t: "AI按领域提出创业可能性",
+    heroCard3: "支持连接", heroCard3t: "导师辅导、知识产权审查、孵化中心通道",
+    languageLabel: "语言选择",
+    languageTitle: "以多语言方式运营，让本地学生和外国留学生都能参与。",
+    languageDesc: "页面语言和AI结果语言会同时切换。创业支援部门可将其作为多语言接收渠道。",
+    flowLabel: "运营流程", flowTitle: "创业支援部门实际可用的接收、诊断与支持连接结构",
+    flow1: "多语言接收", flow1t: "输入团队、领域、问题、客户和MVP方式",
+    flow2: "AI初步诊断", flow2t: "提出5个想法、评分、难度和收入模型",
+    flow3: "邮件提交·链接", flow3t: "将AI诊断结果提交至hotissue0@bufs.ac.kr，并生成数字作品集链接",
+    flow4: "后续支持", flow4t: "导师辅导、专利/商标审查、孵化中心连接",
+    builderTitle: "学生创业想法接收与诊断",
+    builderDesc: "这是面向所有专业学生的通用创业诊断工具，不限于医疗旅游。",
+    teamLabel: "团队名称", leaderLabel: "学生负责人", departmentLabel: "院系/专业", emailLabel: "联系邮箱",
+    teamPlaceholder: "例: Global Bridge Team", leaderPlaceholder: "例: 张三", departmentPlaceholder: "例: 越南语专业 / AI融合 / 旅游", emailPlaceholder: "student@bufs.ac.kr",
+    categoryLabel: "想法领域",
+    problemLabel: "想解决的问题", problemPlaceholder: "例: 学生很难从分散的公告中找到课外活动、奖学金和就业信息。",
+    customerLabel: "谁最受这个问题影响？", customerPlaceholder: "例: 新生、外国留学生、求职学生、当地小商户",
+    limitLabel: "现有解决方式的局限", limitPlaceholder: "例: 信息分散在多个页面，难以根据个人情况提供引导。",
+    ideaHintLabel: "是否已有解决想法？", ideaHintPlaceholder: "没有也可以。AI会提出5个方向。",
+    strengthLabel: "团队优势", mvpLabel: "第一个MVP方式", supportLabel: "希望学校提供的支持",
+    consentText: "我理解提交的想法属于学生/团队资产，仅用于评审和导师辅导，知识产权归属需另行协商。",
+    generateBtn: "用AI诊断5个想法", pdfBtn: "邮件提交", resetBtn: "重置",
+    apiNote: "实际AI输出需要在Netlify环境变量中设置OPENAI_API_KEY。",
+    resultTag: "AI诊断结果", resultTitle: "5种创业可能性",
+    emptyTitle: "请填写左侧表单。", emptyText: "AI将提出5个想法、评分、MVP、收入模型和知识产权方向。",
+    loadingTitle: "AI正在诊断创业可能性...", loadingText: "正在整理5个想法、评分和行动计划。",
+    fallbackNote: "这是AI连接前的示例结果。将OPENAI_API_KEY添加到Netlify环境变量后会显示真实AI结果。",
+    aiNote: "AI连接结果", recommended: "AI推荐", option: "选项", score: "评分", difficulty: "难度", mvp: "MVP", revenue: "收入模型", ip: "知识产权方向", risk: "注意", selectIdea: "选择此想法",
+    selectedTitle: "所选想法详情", mailBtn: "通过邮件提交给创业支援部门", linkBtn: "生成想法链接", copyBtn: "复制结果", copied: "已复制。", copyFail: "复制失败。", mailNeedResult: "请先生成AI诊断结果。", linkMade: "想法链接已生成。",
+    criteriaLabel: "诊断标准", criteriaTitle: "便于连接创业支援部门评审的8项标准", criteriaDescA: "快速检查学生想法的执行可能性。", criteriaDescB: "用于判断后续导师辅导与支持连接。",
+    footerSub: "面向BUFS创业支援的学生创业接收与诊断MVP", footerNote: "这是教育/提案用MVP。实际运营需要隐私政策、知识产权归属同意和管理员审批流程。",
+    mailSubject: "[BUFS Startup Bridge AI] 学生创业想法提交", mailTo: "hotissue0@bufs.ac.kr",
+    portfolioTitle: "学生创业想法链接", backHome: "返回应用", regNo: "接收编号", problemShort: "问题", teamShort: "团队", categoryShort: "领域", solutionShort: "解决方案", sevenDayMvp: "7天MVP", fourWeekPlan: "4周计划", interview: "客户访谈", applicationEmailGreeting: "您好。", applicationEmailIntro: "我提交BUFS Startup Bridge AI v2想法。", selectedIdeaLabel: "所选想法", aiDiagnosis: "AI诊断结果",
+    categoryOptions: { aiSoftware: "AI/软件服务", languageGlobal: "外语/翻译/多文化服务", tourismLocal: "旅游/本地问题解决", contentMedia: "内容/媒体/SNS创业", education: "教育/学习/辅导服务", beautyLifestyle: "K-Beauty/生活方式产品", goodsProduct: "周边/产品/制造想法", esgSocial: "ESG/社会问题解决", campusLife: "校园生活不便解决", healthWellness: "医疗健康/身心健康" },
+    strengthOptions: { language: "外语/翻译", content: "视频/SNS内容", planning: "策划/调研", development: "Web/App/AI制作", design: "设计/品牌", network: "现场网络" },
+    mvpOptions: { chatbot: "AI聊天机器人", webapp: "简单Web应用", form: "Google表单+自动引导", map: "地图型引导", content: "SNS/视频内容", prototype: "产品概念板" },
+    supportOptions: { mentoring: "创业导师辅导", ip: "专利/商标审查", space: "创业空间/孵化", funding: "样品/活动经费", team: "团队匹配", education: "培训/讲座" },
+    criteria: ["问题清晰度", "客户验证可能性", "与BUFS优势的适配度", "7天MVP可行性", "收入模型可能性", "知识产权审查可能性", "伦理/法律风险", "创业支持连接性"],
+    fallback: {
+      problem: "学生遇到的不便", names: ["校园桥接AI", "学生公告查找器", "智能学生伙伴", "本地连接实验室", "学生支持服务台"], oneLine: "以小而可验证的方式解决输入问题的学生创业想法。", target: "BUFS学生", solution: "利用团队优势，通过所选MVP方式验证问题。", difficulty: ["容易", "容易", "中等", "中等", "较难"],
+      mvpPlan: ["第1天：采访5名用户", "第2天：整理10个重复问题", "第3天：制作MVP界面草案", "第4天：搭建表单/聊天机器人/页面", "第5天：用户测试", "第6天：修改", "第7天：完成发表材料"],
+      fourWeekPlan: ["第1周：验证问题", "第2周：制作MVP", "第3周：用户测试", "第4周：发表并申请支持"],
+      interviewQuestions: ["最不方便的时刻是什么时候？", "现在如何解决？", "如果解决了会带来什么改善？", "是否值得节省金钱或时间？", "最先需要的功能是什么？"],
+      teamRoles: ["策划", "客户访谈", "内容/设计", "Web/AI制作"], revenueModel: ["学校/机构合作", "高级功能", "运营代办"], ipDirection: ["服务名称可作为商标候选", "内容可通过著作权管理", "AI处理流程可作为专利审查候选"], risks: ["最小化收集个人信息", "确认官方信息来源", "知识产权申请前需要学生同意"], recommend: "可在校园内快速访谈和测试MVP，容易连接创业支援部门的导师辅导。", whyRecommended: "最容易在校园内快速验证。", mentoringQuestions: ["最先要见的5位客户是谁？", "7天内可以展示什么界面？", "是否存在个人信息或法律风险？"]
     }
   },
-  "multiculturalFamily": {
-    "pain": {
-      "ko": "가족 돌봄, 병원 동행, 행정서류, 학교 안내를 이해하기 어렵다",
-      "en": "They struggle with family care, hospital accompaniment, administrative documents, and school notices.",
-      "vi": "Họ gặp khó khăn với chăm sóc gia đình, đi cùng đến bệnh viện, giấy tờ hành chính và thông báo của trường.",
-      "ja": "家族のケア、病院同行、行政書類、学校案内を理解することが難しいです。",
-      "zh": "他们在家庭照护、医院陪同、行政文件和学校通知方面遇到困难。",
-      "ar": "يواجهون صعوبة في رعاية الأسرة ومرافقة المستشفى والوثائق الإدارية وإعلانات المدرسة."
-    },
-    "names": [
-      "Family Bridge AI",
-      "Together Guide AI",
-      "Shalom Care Helper"
-    ],
-    "pitchTarget": {
-      "ko": "한국 생활을 준비하는 다문화 가족",
-      "en": "multicultural families preparing for life in Korea",
-      "vi": "gia đình đa văn hóa chuẩn bị cuộc sống tại Hàn Quốc",
-      "ja": "韓国生活を準備する多文化家族",
-      "zh": "准备在韩国生活的多文化家庭",
-      "ar": "الأسر متعددة الثقافات التي تستعد للحياة في كوريا"
+
+  ar: {
+    skip: "تجاوز إلى المحتوى الرئيسي",
+    brandSub: "منصة لاستقبال وتشخيص أفكار ريادة الأعمال الطلابية لمكتب دعم الشركات الناشئة",
+    navApply: "تقديم الفكرة", navFlow: "مسار التشغيل", navCriteria: "معايير التشخيص",
+    eyebrow: "ذكاء اصطناعي · ريادة طلابية · تعدد لغات · تجارية",
+    heroTitle: "نحوّل المشكلة الصغيرة التي يكتشفها الطالب<br>إلى فرصة ريادية",
+    heroLead: "صُممت المنصة ليستقبل مكتب دعم الشركات الناشئة أفكارًا في مجالات متنوعة مثل حياة الحرم الجامعي، خدمات الذكاء الاصطناعي، المحتوى، السياحة، التعليم، ESG، والمنتجات، دون التركيز على قطاع واحد فقط.",
+    ctaStart: "ابدأ التشخيص", ctaFlow: "عرض هيكل التشغيل",
+    heroCard1: "إدخال المشكلة", heroCard1t: "يدخل الطالب نقطة الألم والعميل المستهدف",
+    heroCard2: "5 أفكار", heroCard2t: "يقترح الذكاء الاصطناعي فرصًا ريادية حسب المجال",
+    heroCard3: "ربط الدعم", heroCard3t: "إرشاد، مراجعة الملكية الفكرية، ومسار الحاضنة",
+    languageLabel: "اختيار اللغة",
+    languageTitle: "تشغيل متعدد اللغات ليشارك الطلاب المحليون والطلاب الدوليون معًا.",
+    languageDesc: "تتغير لغة الواجهة ونتائج الذكاء الاصطناعي معًا. يمكن لمكتب دعم الشركات الناشئة استخدامها كقناة استقبال متعددة اللغات.",
+    flowLabel: "مسار التشغيل", flowTitle: "هيكل عملي للاستقبال والتشخيص وربط الدعم لمكتب ريادة الأعمال",
+    flow1: "استقبال متعدد اللغات", flow1t: "إدخال الفريق، المجال، المشكلة، العميل، ونوع MVP",
+    flow2: "تشخيص أولي بالذكاء الاصطناعي", flow2t: "اقتراح 5 أفكار، درجات، مستوى الصعوبة، ونماذج الدخل",
+    flow3: "إرسال بالبريد · رابط", flow3t: "إرسال نتيجة تشخيص AI إلى hotissue0@bufs.ac.kr وإنشاء رابط ملف رقمي",
+    flow4: "دعم لاحق", flow4t: "إرشاد، مراجعة براءة/علامة تجارية، وربط بالحاضنة",
+    builderTitle: "استقبال وتشخيص أفكار ريادة الأعمال الطلابية",
+    builderDesc: "أداة عامة لتشخيص أفكار الطلاب من كل التخصصات، وليست محدودة بالسياحة الطبية.",
+    teamLabel: "اسم الفريق", leaderLabel: "اسم قائد الفريق", departmentLabel: "القسم/التخصص", emailLabel: "البريد الإلكتروني",
+    teamPlaceholder: "مثال: Global Bridge Team", leaderPlaceholder: "مثال: أحمد محمد", departmentPlaceholder: "مثال: اللغة الفيتنامية / تقارب AI / السياحة", emailPlaceholder: "student@bufs.ac.kr",
+    categoryLabel: "مجال الفكرة",
+    problemLabel: "المشكلة المراد حلها", problemPlaceholder: "مثال: يصعب على الطلاب العثور على الأنشطة غير المنهجية والمنح ومعلومات التوظيف لأنها موزعة في إعلانات متعددة.",
+    customerLabel: "من يعاني من هذه المشكلة أكثر؟", customerPlaceholder: "مثال: الطلاب الجدد، الطلاب الدوليون، الباحثون عن عمل، المتاجر المحلية الصغيرة",
+    limitLabel: "حدود الحلول الحالية", limitPlaceholder: "مثال: المعلومات موزعة على صفحات كثيرة وليست مخصصة لحالة كل شخص.",
+    ideaHintLabel: "هل لديك فكرة حل بالفعل؟", ideaHintPlaceholder: "اختياري. سيقترح الذكاء الاصطناعي خمسة اتجاهات.",
+    strengthLabel: "قوة الفريق", mvpLabel: "نوع MVP الأول", supportLabel: "الدعم المطلوب من الجامعة",
+    consentText: "أفهم أن الفكرة المقدمة ملك للطالب/الفريق، وسيتم الاطلاع عليها لأغراض الفرز والإرشاد، وأن ملكية حقوق الملكية الفكرية تحتاج إلى اتفاق منفصل.",
+    generateBtn: "تشخيص 5 أفكار بالذكاء الاصطناعي", pdfBtn: "إرسال بالبريد", resetBtn: "إعادة ضبط",
+    apiNote: "تعمل نتائج الذكاء الاصطناعي الفعلية عند ضبط OPENAI_API_KEY في متغيرات بيئة Netlify.",
+    resultTag: "نتيجة تشخيص AI", resultTitle: "5 فرص ريادية",
+    emptyTitle: "املأ النموذج في الجهة اليسرى.", emptyText: "سيقترح AI خمس أفكار ودرجات وMVP ونموذج دخل واتجاه الملكية الفكرية.",
+    loadingTitle: "يقوم AI بتشخيص الإمكانية الريادية...", loadingText: "يتم إعداد 5 أفكار ودرجات وخطط عمل.",
+    fallbackNote: "هذه نتيجة نموذجية قبل الاتصال بالذكاء الاصطناعي. أضف OPENAI_API_KEY إلى متغيرات Netlify للحصول على نتيجة فعلية.",
+    aiNote: "نتيجة متصلة بالذكاء الاصطناعي", recommended: "توصية AI", option: "خيار", score: "الدرجة", difficulty: "الصعوبة", mvp: "MVP", revenue: "نموذج الدخل", ip: "اتجاه الملكية الفكرية", risk: "تنبيه", selectIdea: "اختر هذه الفكرة",
+    selectedTitle: "تفاصيل الفكرة المختارة", mailBtn: "إرسال بالبريد إلى مكتب ريادة الأعمال", linkBtn: "إنشاء رابط الفكرة", copyBtn: "نسخ النتيجة", copied: "تم النسخ.", copyFail: "فشل النسخ.", mailNeedResult: "يرجى إنشاء نتيجة تشخيص AI أولاً.", linkMade: "تم إنشاء رابط الفكرة.",
+    criteriaLabel: "معايير التشخيص", criteriaTitle: "8 معايير سهلة الربط بفرز مكتب دعم الشركات الناشئة", criteriaDescA: "تفحص بسرعة قابلية تنفيذ فكرة الطالب.", criteriaDescB: "تستخدم للحكم على الإرشاد اللاحق وربط الدعم.",
+    footerSub: "MVP لاستقبال وتشخيص أفكار الطلاب لاستخدامها في دعم ريادة الأعمال بجامعة BUFS", footerNote: "هذا MVP تعليمي/اقتراحي. التشغيل الحقيقي يحتاج إلى سياسة خصوصية، موافقة على ملكية الحقوق، وإجراءات موافقة إدارية.",
+    mailSubject: "[BUFS Startup Bridge AI] تقديم فكرة ريادة طلابية", mailTo: "hotissue0@bufs.ac.kr",
+    portfolioTitle: "رابط فكرة ريادة طلابية", backHome: "العودة إلى التطبيق", regNo: "رقم الطلب", problemShort: "المشكلة", teamShort: "الفريق", categoryShort: "المجال", solutionShort: "الحل", sevenDayMvp: "MVP خلال 7 أيام", fourWeekPlan: "خطة 4 أسابيع", interview: "مقابلة العملاء", applicationEmailGreeting: "مرحبًا.", applicationEmailIntro: "أقدم فكرة من BUFS Startup Bridge AI v2.", selectedIdeaLabel: "الفكرة المختارة", aiDiagnosis: "نتيجة تشخيص AI",
+    categoryOptions: { aiSoftware: "خدمة AI/برمجيات", languageGlobal: "خدمة لغات/ترجمة/تعدد ثقافي", tourismLocal: "حل سياحي/مشكلة محلية", contentMedia: "مشروع محتوى/إعلام/SNS", education: "خدمة تعليم/تعلم/تدريس", beautyLifestyle: "منتج K-Beauty/نمط حياة", goodsProduct: "فكرة بضائع/منتج/تصنيع", esgSocial: "حل ESG/مشكلة اجتماعية", campusLife: "حل مشكلة في حياة الحرم الجامعي", healthWellness: "رعاية صحية/عافية" },
+    strengthOptions: { language: "لغات/ترجمة", content: "محتوى فيديو/SNS", planning: "تخطيط/بحث", development: "بناء ويب/تطبيق/AI", design: "تصميم/علامة تجارية", network: "شبكة ميدانية" },
+    mvpOptions: { chatbot: "روبوت محادثة AI", webapp: "تطبيق ويب بسيط", form: "نموذج Google + دليل تلقائي", map: "دليل يعتمد على الخريطة", content: "محتوى SNS/فيديو", prototype: "لوحة مفهوم المنتج" },
+    supportOptions: { mentoring: "إرشاد ريادي", ip: "مراجعة براءة/علامة تجارية", space: "مساحة ريادية/حاضنة", funding: "تمويل نموذج أولي/نشاط", team: "مطابقة أعضاء الفريق", education: "تدريب/محاضرة" },
+    criteria: ["وضوح المشكلة", "إمكانية التحقق من العملاء", "التوافق مع قوة BUFS", "قابلية MVP خلال 7 أيام", "إمكانية نموذج الدخل", "إمكانية مراجعة الملكية الفكرية", "مخاطر أخلاقية/قانونية", "قابلية الربط بدعم ريادة الأعمال"],
+    fallback: {
+      problem: "نقطة ألم لدى الطلاب", names: ["Campus Bridge AI", "باحث إعلانات الطلاب", "رفيق الطالب الذكي", "Local Connect Lab", "مكتب دعم الطلاب"], oneLine: "فكرة ريادية طلابية تحل المشكلة المدخلة بطريقة صغيرة وقابلة للاختبار.", target: "طلاب BUFS", solution: "استخدم قوة الفريق للتحقق من المشكلة من خلال نوع MVP المختار.", difficulty: ["سهل", "سهل", "متوسط", "متوسط", "صعب"],
+      mvpPlan: ["اليوم 1: مقابلة 5 مستخدمين", "اليوم 2: تنظيم 10 أسئلة متكررة", "اليوم 3: إعداد مسودة شاشة MVP", "اليوم 4: بناء نموذج/روبوت/صفحة", "اليوم 5: اختبار مع المستخدمين", "اليوم 6: تعديل", "اليوم 7: إكمال مواد العرض"],
+      fourWeekPlan: ["الأسبوع 1: التحقق من المشكلة", "الأسبوع 2: بناء MVP", "الأسبوع 3: اختبار المستخدمين", "الأسبوع 4: العرض وطلب الدعم"],
+      interviewQuestions: ["متى تكون اللحظة الأكثر إزعاجًا؟", "كيف تحلها الآن؟", "ما الذي سيتحسن إذا تم حلها؟", "هل تستحق توفير المال أو الوقت؟", "ما أول وظيفة تحتاجها؟"],
+      teamRoles: ["تخطيط", "مقابلة العملاء", "محتوى/تصميم", "بناء ويب/AI"], revenueModel: ["شراكة مع جامعة/مؤسسة", "ميزة مدفوعة", "تشغيل بالوكالة"], ipDirection: ["اسم الخدمة مرشح كعلامة تجارية", "إدارة المحتوى بحقوق النشر", "مسار معالجة AI مرشح للمراجعة كبراءة"], risks: ["تقليل جمع البيانات الشخصية", "التحقق من المصادر الرسمية", "موافقة الطالب مطلوبة قبل إيداع حقوق الملكية الفكرية"], recommend: "يمكن إجراء مقابلات واختبار MVP بسرعة داخل الحرم، ومن السهل ربطه بإرشاد مكتب ريادة الأعمال.", whyRecommended: "الأسرع للتحقق داخل الحرم الجامعي.", mentoringQuestions: ["من هم أول 5 عملاء يجب مقابلتهم؟", "ما الشاشة التي يمكن عرضها خلال 7 أيام؟", "هل توجد مخاطر بيانات شخصية أو قانونية؟"]
     }
   }
-};
-const strengths = {
-  "language": {
-    "ko": "외국어 번역과 문화 이해",
-    "en": "language translation and cultural understanding",
-    "vi": "dịch thuật ngoại ngữ và hiểu biết văn hóa",
-    "ja": "外国語翻訳と文化理解",
-    "zh": "外语翻译和文化理解",
-    "ar": "الترجمة وفهم الثقافة"
-  },
-  "content": {
-    "ko": "영상·SNS 콘텐츠 제작",
-    "en": "video and SNS content creation",
-    "vi": "sản xuất video và nội dung mạng xã hội",
-    "ja": "映像・SNSコンテンツ制作",
-    "zh": "视频与社交媒体内容制作",
-    "ar": "إنتاج الفيديو ومحتوى وسائل التواصل"
-  },
-  "tourism": {
-    "ko": "관광 코스 기획과 현장 조사",
-    "en": "tour route planning and field research",
-    "vi": "lập kế hoạch tuyến du lịch và khảo sát hiện trường",
-    "ja": "観光コース企画と現地調査",
-    "zh": "旅游路线规划和现场调查",
-    "ar": "تخطيط المسارات السياحية والبحث الميداني"
-  },
-  "ai": {
-    "ko": "AI 챗봇과 노코드 자동화",
-    "en": "AI chatbot and no-code automation",
-    "vi": "chatbot AI và tự động hóa no-code",
-    "ja": "AIチャットボットとノーコード自動化",
-    "zh": "AI聊天机器人和无代码自动化",
-    "ar": "روبوت محادثة AI وأتمتة no-code"
-  },
-  "beauty": {
-    "ko": "K-뷰티 제품 이해와 상담 콘텐츠",
-    "en": "K-beauty product knowledge and consultation content",
-    "vi": "hiểu biết sản phẩm K-beauty và nội dung tư vấn",
-    "ja": "Kビューティー製品理解と相談コンテンツ",
-    "zh": "K-Beauty产品理解和咨询内容",
-    "ar": "معرفة منتجات K-beauty ومحتوى الاستشارة"
-  }
-};
-const tools = {
-  "chatbot": {
-    "ko": "AI 챗봇",
-    "en": "AI chatbot",
-    "vi": "chatbot AI",
-    "ja": "AIチャットボット",
-    "zh": "AI聊天机器人",
-    "ar": "روبوت محادثة AI"
-  },
-  "webapp": {
-    "ko": "간단한 웹앱",
-    "en": "simple web app",
-    "vi": "ứng dụng web đơn giản",
-    "ja": "簡単なWebアプリ",
-    "zh": "简单网页应用",
-    "ar": "تطبيق ويب بسيط"
-  },
-  "form": {
-    "ko": "구글폼과 자동 안내문",
-    "en": "Google Form and automatic guide",
-    "vi": "Google Form và hướng dẫn tự động",
-    "ja": "Googleフォームと自動案内文",
-    "zh": "Google表单和自动指南",
-    "ar": "Google Form ودليل تلقائي"
-  },
-  "map": {
-    "ko": "지도 기반 안내 페이지",
-    "en": "map-based guide page",
-    "vi": "trang hướng dẫn dựa trên bản đồ",
-    "ja": "地図ベース案内ページ",
-    "zh": "基于地图的指南页面",
-    "ar": "صفحة إرشاد بالخريطة"
-  },
-  "cards": {
-    "ko": "다국어 문장카드",
-    "en": "multilingual phrase cards",
-    "vi": "thẻ câu đa ngôn ngữ",
-    "ja": "多言語フレーズカード",
-    "zh": "多语言句子卡",
-    "ar": "بطاقات عبارات متعددة اللغات"
-  }
-};
-const topIdeas = [
-  {
-    "title": {
-      "ko": "외국인 유학생 정착 AI 도우미",
-      "en": "AI settlement helper for international students",
-      "vi": "AI hỗ trợ du học sinh ổn định",
-      "ja": "留学生定着AIサポーター",
-      "zh": "留学生安顿AI助手",
-      "ar": "مساعد AI لاستقرار الطلاب الدوليين"
-    },
-    "target": "foreignStudent",
-    "problem": "한국에 처음 온 유학생이 기숙사, 은행, 병원, 교통, 학교 행정 절차를 어려워한다.",
-    "strength": "language",
-    "tool": "chatbot",
-    "why": {
-      "ko": "부산외대 안에서 바로 인터뷰하고 테스트할 수 있습니다.",
-      "en": "You can interview and test users inside BUFS right away.",
-      "vi": "Có thể phỏng vấn và thử nghiệm ngay trong BUFS.",
-      "ja": "釜山外大の中ですぐにインタビューしてテストできます。",
-      "zh": "可以在釜山外大内部立即采访并测试。",
-      "ar": "يمكن إجراء مقابلات واختبار المستخدمين داخل BUFS مباشرة."
-    }
-  },
-  {
-    "title": {
-      "ko": "부산외대 캠퍼스 AI 가이드",
-      "en": "BUFS campus AI guide",
-      "vi": "AI hướng dẫn campus BUFS",
-      "ja": "BUFSキャンパスAIガイド",
-      "zh": "BUFS校园AI指南",
-      "ar": "دليل حرم BUFS بالذكاء الاصطناعي"
-    },
-    "target": "foreignStudent",
-    "problem": "신입 유학생이 행정실, 학식, 버스, 주변 병원과 식당 위치를 잘 모른다.",
-    "strength": "ai",
-    "tool": "map",
-    "why": {
-      "ko": "학교 안 데이터만으로도 첫 MVP를 만들 수 있습니다.",
-      "en": "The first MVP can be made with campus data only.",
-      "vi": "MVP đầu tiên có thể tạo chỉ bằng dữ liệu trong trường.",
-      "ja": "学校内のデータだけでも最初のMVPを作れます。",
-      "zh": "仅用校园数据就可以制作第一个MVP。",
-      "ar": "يمكن بناء أول MVP باستخدام بيانات الحرم فقط."
-    }
-  },
-  {
-    "title": {
-      "ko": "외국인 병원 방문 문장카드",
-      "en": "Hospital phrase cards for foreigners",
-      "vi": "Thẻ câu dùng khi đi bệnh viện",
-      "ja": "外国人病院訪問フレーズカード",
-      "zh": "外国人医院就诊句子卡",
-      "ar": "بطاقات عبارات للمستشفى للأجانب"
-    },
-    "target": "hospitalVisitor",
-    "problem": "외국인이 병원에서 증상, 복용약, 알레르기, 통증 정도를 정확히 설명하기 어렵다.",
-    "strength": "language",
-    "tool": "cards",
-    "why": {
-      "ko": "의료 판단 없이 의사소통을 돕는 안전한 서비스입니다.",
-      "en": "It safely supports communication without medical judgment.",
-      "vi": "Đây là dịch vụ an toàn hỗ trợ giao tiếp mà không đưa ra phán đoán y tế.",
-      "ja": "医療判断なしで意思疎通を助ける安全なサービスです。",
-      "zh": "这是不进行医疗判断、只帮助沟通的安全服务。",
-      "ar": "يدعم التواصل بأمان دون تقديم حكم طبي."
-    }
-  },
-  {
-    "title": {
-      "ko": "부산 K-컬처 팬덤 투어 AI",
-      "en": "Busan K-culture fandom tour AI",
-      "vi": "AI tour fandom K-culture Busan",
-      "ja": "釜山KカルチャーファンダムツアーAI",
-      "zh": "釜山K文化粉丝旅游AI",
-      "ar": "جولة جماهير K-culture في بوسان بالذكاء الاصطناعي"
-    },
-    "target": "busanTourist",
-    "problem": "외국인 팬이 K-pop, 드라마, 굿즈샵, 포토존, 맛집을 하루 코스로 연결하기 어렵다.",
-    "strength": "content",
-    "tool": "webapp",
-    "why": {
-      "ko": "학생들이 재미있게 콘텐츠로 확장할 수 있습니다.",
-      "en": "Students can expand it into fun content.",
-      "vi": "Sinh viên có thể mở rộng thành nội dung thú vị.",
-      "ja": "学生が楽しくコンテンツへ拡張できます。",
-      "zh": "学生可以有趣地扩展成内容。",
-      "ar": "يمكن للطلاب توسيعها إلى محتوى ممتع."
-    }
-  },
-  {
-    "title": {
-      "ko": "K-뷰티 다국어 상담 서비스",
-      "en": "Multilingual K-beauty consultation",
-      "vi": "Tư vấn K-beauty đa ngôn ngữ",
-      "ja": "Kビューティー多言語相談",
-      "zh": "K-Beauty多语咨询服务",
-      "ar": "استشارة K-beauty متعددة اللغات"
-    },
-    "target": "kBeautyCustomer",
-    "problem": "외국인 고객이 피부 타입과 현지 기후에 맞는 K-뷰티 제품 사용 순서를 알기 어렵다.",
-    "strength": "beauty",
-    "tool": "form",
-    "why": {
-      "ko": "동남아, 베트남 시장과 연결하기 좋은 아이디어입니다.",
-      "en": "It connects well with Vietnam and Southeast Asian markets.",
-      "vi": "Ý tưởng này phù hợp để kết nối với Việt Nam và thị trường Đông Nam Á.",
-      "ja": "ベトナムや東南アジア市場とつなげやすいアイデアです。",
-      "zh": "这是适合连接越南和东南亚市场的想法。",
-      "ar": "فكرة مناسبة للربط مع فيتنام وأسواق جنوب شرق آسيا."
-    }
-  }
-];
-const mvpStepsByLang = {
-  "ko": [
-    "1일차: 실제 사용자 3명 인터뷰",
-    "2일차: 질문 10개 정리",
-    "3일차: 다국어 답변 초안 작성",
-    "4일차: MVP 화면 또는 챗봇 구성",
-    "5일차: 질문 입력 → 답변 → 다음 행동 안내 테스트",
-    "6일차: 사용자 피드백 반영",
-    "7일차: 1장 발표자료와 30초 피치 완성"
-  ],
-  "en": [
-    "Day 1: Interview 3 real users",
-    "Day 2: Organize 10 frequent questions",
-    "Day 3: Draft multilingual answers",
-    "Day 4: Build an MVP screen or chatbot flow",
-    "Day 5: Test question → answer → next action guidance",
-    "Day 6: Apply user feedback",
-    "Day 7: Complete a one-page deck and 30-second pitch"
-  ],
-  "vi": [
-    "Ngày 1: Phỏng vấn 3 người dùng thật",
-    "Ngày 2: Sắp xếp 10 câu hỏi thường gặp",
-    "Ngày 3: Soạn câu trả lời đa ngôn ngữ",
-    "Ngày 4: Tạo màn hình MVP hoặc luồng chatbot",
-    "Ngày 5: Kiểm tra câu hỏi → câu trả lời → hướng dẫn hành động tiếp theo",
-    "Ngày 6: Chỉnh sửa theo phản hồi người dùng",
-    "Ngày 7: Hoàn thành 1 trang thuyết trình và bài pitch 30 giây"
-  ],
-  "ja": [
-    "1日目：実際のユーザー3人にインタビュー",
-    "2日目：よく出る質問10個を整理",
-    "3日目：多言語回答の草案を作成",
-    "4日目：MVP画面またはチャットボットの流れを構成",
-    "5日目：質問→回答→次の行動案内をテスト",
-    "6日目：ユーザーフィードバックを反映",
-    "7日目：1枚の発表資料と30秒ピッチを完成"
-  ],
-  "zh": [
-    "第1天：采访3名真实用户",
-    "第2天：整理10个常见问题",
-    "第3天：编写多语言回答草案",
-    "第4天：制作MVP界面或聊天机器人流程",
-    "第5天：测试“提问→回答→下一步行动引导”",
-    "第6天：根据用户反馈修改",
-    "第7天：完成一页发表资料和30秒演讲"
-  ],
-  "ar": [
-    "اليوم 1: مقابلة 3 مستخدمين حقيقيين",
-    "اليوم 2: تنظيم 10 أسئلة متكررة",
-    "اليوم 3: كتابة مسودة إجابات متعددة اللغات",
-    "اليوم 4: بناء شاشة MVP أو تدفق روبوت المحادثة",
-    "اليوم 5: اختبار سؤال → إجابة → إرشاد للخطوة التالية",
-    "اليوم 6: تطبيق ملاحظات المستخدمين",
-    "اليوم 7: إكمال شريحة واحدة وعرض مدته 30 ثانية"
-  ]
-};
-const sampleQuestionsByTarget = {
-  "foreignStudent": {
-    "ko": [
-      "외국인등록은 어디서 시작하나요?",
-      "학교 근처 은행은 어디인가요?",
-      "아플 때 어느 병원에 가면 되나요?"
-    ],
-    "en": [
-      "Where do I start alien registration?",
-      "Which bank is near campus?",
-      "Which clinic should I visit when I am sick?"
-    ],
-    "vi": [
-      "Tôi bắt đầu đăng ký người nước ngoài ở đâu?",
-      "Ngân hàng nào gần trường?",
-      "Khi bị ốm tôi nên đến bệnh viện nào?"
-    ],
-    "ja": [
-      "外国人登録はどこから始めますか？",
-      "学校の近くの銀行はどこですか？",
-      "体調が悪い時はどの病院に行けばよいですか？"
-    ],
-    "zh": [
-      "外国人登记从哪里开始？",
-      "学校附近有哪些银行？",
-      "生病时应该去哪家医院？"
-    ],
-    "ar": [
-      "من أين أبدأ تسجيل الأجانب؟",
-      "أي بنك قريب من الجامعة؟",
-      "إلى أي عيادة أذهب عندما أمرض؟"
-    ]
-  },
-  "medicalTourist": {
-    "ko": [
-      "병원 상담 후 오래 걷지 않는 코스가 있나요?",
-      "보호자가 쉴 수 있는 곳은 어디인가요?",
-      "지도와 사진으로 안내해 주세요."
-    ],
-    "en": [
-      "Is there a route with little walking after hospital consultation?",
-      "Where can my companion rest?",
-      "Please guide me with a map and photos."
-    ],
-    "vi": [
-      "Có tuyến nào ít phải đi bộ sau khi tư vấn bệnh viện không?",
-      "Người đi cùng có thể nghỉ ở đâu?",
-      "Hãy hướng dẫn bằng bản đồ và hình ảnh."
-    ],
-    "ja": [
-      "病院相談後、あまり歩かないコースはありますか？",
-      "付き添いの人が休める場所はどこですか？",
-      "地図と写真で案内してください。"
-    ],
-    "zh": [
-      "医院咨询后有没有少走路的路线？",
-      "陪同人员可以在哪里休息？",
-      "请用地图和照片为我导航。"
-    ],
-    "ar": [
-      "هل يوجد مسار لا يتطلب مشيًا كثيرًا بعد استشارة المستشفى؟",
-      "أين يمكن للمرافق أن يستريح؟",
-      "أرشدني بخريطة وصور من فضلك."
-    ]
-  },
-  "busanTourist": {
-    "ko": [
-      "부산에서 반나절 코스를 추천해 주세요.",
-      "짐을 들고 다니지 않는 동선이 있나요?",
-      "사진 찍기 좋은 곳을 알려주세요."
-    ],
-    "en": [
-      "Please recommend a half-day route in Busan.",
-      "Is there a route without carrying luggage?",
-      "Tell me good photo spots."
-    ],
-    "vi": [
-      "Hãy gợi ý tuyến nửa ngày ở Busan.",
-      "Có tuyến nào không phải mang hành lý không?",
-      "Hãy chỉ cho tôi điểm chụp ảnh đẹp."
-    ],
-    "ja": [
-      "釜山で半日コースをおすすめしてください。",
-      "荷物を持ち歩かない動線はありますか？",
-      "写真を撮るのに良い場所を教えてください。"
-    ],
-    "zh": [
-      "请推荐釜山半日路线。",
-      "有没有不用一直带行李的路线？",
-      "请告诉我适合拍照的地方。"
-    ],
-    "ar": [
-      "اقترح لي مسار نصف يوم في بوسان.",
-      "هل يوجد مسار دون حمل الأمتعة؟",
-      "أخبرني بمواقع جيدة للتصوير."
-    ]
-  },
-  "kBeautyCustomer": {
-    "ko": [
-      "습한 날씨에 맞는 기초 제품 순서를 알려주세요.",
-      "민감성 피부가 피해야 할 표현은 무엇인가요?",
-      "예산에 맞게 제품군을 추천해 주세요."
-    ],
-    "en": [
-      "Tell me the basic product order for humid weather.",
-      "What should sensitive skin avoid?",
-      "Recommend product groups within my budget."
-    ],
-    "vi": [
-      "Hãy cho tôi thứ tự sản phẩm cơ bản phù hợp thời tiết ẩm.",
-      "Da nhạy cảm nên tránh điều gì?",
-      "Hãy gợi ý nhóm sản phẩm theo ngân sách."
-    ],
-    "ja": [
-      "湿気の多い天気に合う基礎製品の順番を教えてください。",
-      "敏感肌が避けるべき表現は何ですか？",
-      "予算に合う製品群をおすすめしてください。"
-    ],
-    "zh": [
-      "请告诉我适合潮湿天气的基础护肤顺序。",
-      "敏感肌应该避免哪些成分或说明？",
-      "请根据预算推荐产品组合。"
-    ],
-    "ar": [
-      "أخبرني بترتيب المنتجات الأساسية في الطقس الرطب.",
-      "ما الذي يجب أن تتجنبه البشرة الحساسة؟",
-      "اقترح مجموعات منتجات تناسب ميزانيتي."
-    ]
-  },
-  "hospitalVisitor": {
-    "ko": [
-      "알레르기가 있다는 말을 어떻게 하나요?",
-      "복용 중인 약을 어떻게 설명하나요?",
-      "통증 정도를 어떻게 말하나요?"
-    ],
-    "en": [
-      "How do I say that I have an allergy?",
-      "How do I explain my current medication?",
-      "How do I describe my pain level?"
-    ],
-    "vi": [
-      "Tôi nói mình bị dị ứng như thế nào?",
-      "Tôi giải thích thuốc đang dùng như thế nào?",
-      "Tôi nói mức độ đau như thế nào?"
-    ],
-    "ja": [
-      "アレルギーがあることをどう言いますか？",
-      "服用中の薬をどう説明しますか？",
-      "痛みの程度をどう伝えますか？"
-    ],
-    "zh": [
-      "我该怎么说自己有过敏？",
-      "我该如何说明正在服用的药？",
-      "我该如何表达疼痛程度？"
-    ],
-    "ar": [
-      "كيف أقول إن لدي حساسية؟",
-      "كيف أشرح الأدوية التي أتناولها؟",
-      "كيف أصف مستوى الألم؟"
-    ]
-  },
-  "multiculturalFamily": {
-    "ko": [
-      "가족 병원 동행 때 필요한 문장은 무엇인가요?",
-      "학교 안내문을 쉽게 설명해 주세요.",
-      "행정서류 준비 순서를 알려주세요."
-    ],
-    "en": [
-      "What phrases are needed when accompanying family to a hospital?",
-      "Explain the school notice simply.",
-      "Tell me the order for preparing administrative documents."
-    ],
-    "vi": [
-      "Cần câu nào khi đi cùng gia đình đến bệnh viện?",
-      "Hãy giải thích thông báo của trường dễ hiểu.",
-      "Hãy cho tôi thứ tự chuẩn bị giấy tờ hành chính."
-    ],
-    "ja": [
-      "家族の病院同行で必要なフレーズは何ですか？",
-      "学校のお知らせを簡単に説明してください。",
-      "行政書類を準備する順番を教えてください。"
-    ],
-    "zh": [
-      "陪家人去医院时需要哪些句子？",
-      "请简单解释学校通知。",
-      "请告诉我准备行政文件的顺序。"
-    ],
-    "ar": [
-      "ما العبارات اللازمة عند مرافقة الأسرة إلى المستشفى؟",
-      "اشرح إعلان المدرسة ببساطة.",
-      "أخبرني بترتيب تجهيز الوثائق الإدارية."
-    ]
-  }
-};
-const cautionText = {
-  "base": {
-    "ko": [
-      "개인정보는 꼭 필요한 최소한만 수집합니다.",
-      "공식 안내가 필요한 내용은 공식 링크를 함께 확인합니다."
-    ],
-    "en": [
-      "Collect only the minimum personal information needed.",
-      "For official procedures, always check the official link together."
-    ],
-    "vi": [
-      "Chỉ thu thập lượng thông tin cá nhân tối thiểu cần thiết.",
-      "Với nội dung cần hướng dẫn chính thức, hãy kiểm tra kèm liên kết chính thức."
-    ],
-    "ja": [
-      "個人情報は必要最小限だけ収集します。",
-      "公式案内が必要な内容は、必ず公式リンクも一緒に確認します。"
-    ],
-    "zh": [
-      "个人信息只收集必要的最小范围。",
-      "需要官方 안내的内容，必须一起确认官方链接。"
-    ],
-    "ar": [
-      "اجمع الحد الأدنى الضروري فقط من المعلومات الشخصية.",
-      "في الإجراءات الرسمية، تحقق دائمًا من الرابط الرسمي معًا."
-    ]
-  },
-  "medical": {
-    "ko": "의료 진단, 치료효과 보장, 특정 병원 확정 추천 표현은 사용하지 않습니다.",
-    "en": "Do not use medical diagnosis, guaranteed treatment effects, or fixed hospital recommendation wording.",
-    "vi": "Không dùng cách diễn đạt chẩn đoán y tế, đảm bảo hiệu quả điều trị, hoặc khuyến nghị cố định bệnh viện cụ thể.",
-    "ja": "医療診断、治療効果の保証、特定病院の確定推薦表現は使用しません。",
-    "zh": "不要使用医疗诊断、保证治疗效果或确定推荐特定医院的表达。",
-    "ar": "لا تستخدم عبارات التشخيص الطبي أو ضمان نتائج العلاج أو التوصية المؤكدة بمستشفى محدد."
-  }
-};
-const rightsText = {
-  "trademark": {
-    "ko": "{name} 같은 서비스 이름은 상표로 검토할 수 있습니다.",
-    "en": "A service name such as {name} can be reviewed as a trademark.",
-    "vi": "Tên dịch vụ như {name} có thể được xem xét như nhãn hiệu.",
-    "ja": "{name} のようなサービス名は商標として検討できます。",
-    "zh": "像 {name} 这样的服务名称可以作为商标进行审查。",
-    "ar": "يمكن مراجعة اسم خدمة مثل {name} كعلامة تجارية."
-  },
-  "copyright": {
-    "ko": "번역문, 안내문, 카드 문구, 영상 스크립트는 콘텐츠 자산으로 관리합니다.",
-    "en": "Translations, guides, phrase cards, and video scripts should be managed as content assets.",
-    "vi": "Bản dịch, hướng dẫn, nội dung thẻ câu và kịch bản video nên được quản lý như tài sản nội dung.",
-    "ja": "翻訳文、案内文、カード文句、映像スクリプトはコンテンツ資産として管理します。",
-    "zh": "翻译文本、指南、句子卡和视频脚本应作为内容资产管理。",
-    "ar": "تُدار الترجمات والأدلة وبطاقات العبارات ونصوص الفيديو كأصول محتوى."
-  },
-  "patent": {
-    "ko": "사용자 상황을 분석하고 맞춤 안내를 생성하는 처리 흐름은 특허 가능성을 검토할 수 있습니다.",
-    "en": "The process flow that analyzes user situations and generates tailored guidance can be reviewed as a patent candidate.",
-    "vi": "Quy trình phân tích tình huống người dùng và tạo hướng dẫn phù hợp có thể được xem xét như ứng viên sáng chế.",
-    "ja": "ユーザー状況を分析し、個別案内を生成する処理フローは特許候補として検討できます。",
-    "zh": "分析用户情况并生成定制指南的处理流程可作为专利候选进行审查。",
-    "ar": "يمكن مراجعة تدفق المعالجة الذي يحلل حالة المستخدم وينشئ إرشادًا مخصصًا كمرشح براءة."
-  },
-  "notice": {
-    "ko": "진단, 치료효과, 병원 확정 추천 표현은 피하고 의사소통·체류안내 보조로 범위를 제한해야 합니다.",
-    "en": "Avoid diagnosis, treatment effect guarantees, and fixed hospital recommendations; limit the scope to communication and stay guidance support.",
-    "vi": "Tránh chẩn đoán, bảo đảm hiệu quả điều trị và khuyến nghị cố định bệnh viện; giới hạn phạm vi ở hỗ trợ giao tiếp và hướng dẫn lưu trú.",
-    "ja": "診断、治療効果、病院の確定推薦表現は避け、意思疎通・滞在案内補助に範囲を限定します。",
-    "zh": "避免诊断、治疗效果保证和确定推荐医院的表达；范围应限制为沟通和停留指南辅助。",
-    "ar": "تجنب التشخيص وضمان نتائج العلاج والتوصية المؤكدة بالمستشفى؛ وحصر النطاق في دعم التواصل وإرشاد الإقامة."
-  }
-};
-const pitchTemplate = {
-  "ko": "저희는 {target}이 겪는 “{problem}” 문제를 해결하고자 합니다. 첫 단계로 {tool} MVP를 만들고 실제 사용자 3명에게 테스트하겠습니다. 반응이 좋으면 서비스 이름은 상표로, 안내 콘텐츠는 저작권으로, AI가 상황을 분석하고 안내하는 흐름은 특허 후보로 검토하겠습니다.",
-  "en": "We want to solve the problem of “{problem}” faced by {target}. As a first step, we will build a {tool} MVP and test it with 3 real users. If the response is positive, we will review the service name as a trademark, the guide content as copyright, and the AI analysis flow as a patent candidate.",
-  "vi": "Chúng tôi muốn giải quyết vấn đề “{problem}” mà {target} đang gặp. Bước đầu tiên, chúng tôi sẽ tạo MVP bằng {tool} và thử nghiệm với 3 người dùng thật. Nếu phản hồi tích cực, chúng tôi sẽ xem xét tên dịch vụ như nhãn hiệu, nội dung hướng dẫn như bản quyền, và quy trình AI như ứng viên sáng chế.",
-  "ja": "私たちは、{target} が感じる「{problem}」という問題を解決したいと考えています。第一段階として {tool} のMVPを作り、実際のユーザー3人にテストします。反応が良ければ、サービス名は商標、案内コンテンツは著作権、AIが状況を分析して案内する流れは特許候補として検討します。",
-  "zh": "我们希望解决 {target} 所遇到的“{problem}”问题。第一步，我们将制作 {tool} MVP，并让3名真实用户测试。如果反馈良好，服务名称将作为商标、指南内容作为著作权、AI分析并引导的流程作为专利候选进行审查。",
-  "ar": "نريد حل مشكلة “{problem}” التي يواجهها {target}. كخطوة أولى، سنبني MVP باستخدام {tool} ونختبره مع 3 مستخدمين حقيقيين. إذا كانت الاستجابة جيدة، سنراجع اسم الخدمة كعلامة تجارية، ومحتوى الإرشاد كحق مؤلف، وتدفق تحليل AI كمرشح براءة."
-};
-const oneLineTemplate = {
-  "ko": "{target}의 불편을 {tool}로 해결하는 다국어 AI 서비스입니다.",
-  "en": "A multilingual AI service that solves the inconvenience of {target} with a {tool}.",
-  "vi": "Dịch vụ AI đa ngôn ngữ giải quyết bất tiện của {target} bằng {tool}.",
-  "ja": "{target} の不便を {tool} で解決する多言語AIサービスです。",
-  "zh": "这是一项用 {tool} 解决 {target} 不便的多语言AI服务。",
-  "ar": "خدمة ذكاء اصطناعي متعددة اللغات تحل مشكلة {target} باستخدام {tool}."
-};
-const solutionTemplate = {
-  "ko": "{strength}을 활용해 사용자의 상황을 묻고, 필요한 안내를 짧은 카드나 대화형 답변으로 제공합니다.",
-  "en": "Using {strength}, it asks about the user’s situation and provides needed guidance through short cards or conversational answers.",
-  "vi": "Sử dụng {strength}, dịch vụ hỏi tình huống của người dùng và cung cấp hướng dẫn cần thiết bằng thẻ ngắn hoặc câu trả lời hội thoại.",
-  "ja": "{strength}を活用してユーザーの状況を尋ね、必要な案内を短いカードや対話型回答で提供します。",
-  "zh": "利用{strength}询问用户情况，并通过简短卡片或对话式回答提供必要指南。",
-  "ar": "باستخدام {strength}، يسأل التطبيق عن حالة المستخدم ويقدم الإرشاد المطلوب عبر بطاقات قصيرة أو إجابات حوارية."
-};
-const nextActionText = {
-  "ko": "오늘 바로 외국인 친구 3명에게 가장 불편했던 순간을 인터뷰하고, 질문 10개를 정리하세요.",
-  "en": "Today, interview 3 foreign friends about their most inconvenient moment and organize 10 questions.",
-  "vi": "Hôm nay, hãy phỏng vấn 3 người bạn nước ngoài về thời điểm bất tiện nhất và sắp xếp 10 câu hỏi.",
-  "ja": "今日すぐに外国人の友人3人へ最も不便だった瞬間をインタビューし、質問10個を整理してください。",
-  "zh": "今天就采访3位外国朋友最不方便的时刻，并整理10个问题。",
-  "ar": "اليوم، قابل 3 أصدقاء أجانب حول أكثر لحظة كانت مزعجة لهم، ثم نظّم 10 أسئلة."
 };
 
-function lang() { return ui[currentLang] ? currentLang : "ko"; }
-function t(key) { return (ui[lang()] && ui[lang()][key]) || ui.ko[key] || key; }
-function localized(obj) { if (typeof obj === "string") return obj; return obj?.[lang()] || obj?.en || obj?.ko || ""; }
-function escapeHtml(str) { return String(str || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c] || c)); }
-function format(template, values) { return String(template || "").replace(/\{(\w+)\}/g, (_, k) => values[k] ?? ""); }
-function fillSelect(id, options) {
-  const select = document.getElementById(id);
-  if (!select) return;
-  const previous = select.value;
-  select.innerHTML = Object.entries(options).map(([value,label]) => `<option value="${value}">${escapeHtml(label)}</option>`).join("");
-  if (previous && options[previous]) select.value = previous;
-}
-function renderEmpty(force = false) {
-  const box = document.getElementById("resultBox");
-  if (!box) return;
-  if (force || !box.dataset.hasResult || box.dataset.hasResult === "false") {
-    box.innerHTML = `<div class="empty-state"><strong>${escapeHtml(t("emptyTitle"))}</strong><p>${escapeHtml(t("emptyText"))}</p></div>`;
-    box.dataset.hasResult = "false";
-  }
-}
-function applyLanguage(nextLang) {
-  currentLang = ui[nextLang] ? nextLang : "ko";
-  localStorage.setItem("bufsLang", currentLang);
-  const meta = languageMeta[currentLang] || languageMeta.ko;
-  document.documentElement.lang = meta.htmlLang;
-  document.documentElement.dir = meta.dir;
-  document.body.classList.toggle("rtl", meta.dir === "rtl");
+function t(key) { return ui[currentLang]?.[key] ?? ui.en[key] ?? ui.ko[key] ?? key; }
+function escapeHtml(value) { return String(value ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c])); }
+function fillSelect(id, options) { const el = document.getElementById(id); if (!el) return; const previous = el.value; el.innerHTML = Object.entries(options || {}).map(([value, label]) => `<option value="${value}">${escapeHtml(label)}</option>`).join(""); if (previous && options?.[previous]) el.value = previous; }
+
+function applyLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem("bridgeLang", lang);
+  document.documentElement.lang = lang === "zh" ? "zh-CN" : lang === "ja" ? "ja" : lang;
+  document.documentElement.dir = languageMeta[lang]?.dir || "ltr";
+  document.body.classList.toggle("rtl", document.documentElement.dir === "rtl");
   document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
   document.querySelectorAll("[data-i18n-placeholder]").forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
-  document.querySelectorAll(".lang-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.lang === currentLang));
-  fillSelect("target", t("targetOptions"));
+  document.querySelectorAll(".lang-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.lang === lang));
+  fillSelect("category", t("categoryOptions"));
   fillSelect("strength", t("strengthOptions"));
-  fillSelect("tool", t("toolOptions"));
-  renderTemplates();
-  renderEmpty(false);
+  fillSelect("mvpTool", t("mvpOptions"));
+  fillSelect("supportNeed", t("supportOptions"));
+  renderCriteria();
+  if (!lastResult) renderEmpty();
 }
+
+function renderCriteria() {
+  const el = document.getElementById("criteriaGrid");
+  if (!el) return;
+  el.innerHTML = (t("criteria") || []).map((criterion, index) => `<article><b>${String(index + 1).padStart(2, "0")} ${escapeHtml(criterion)}</b><p>${escapeHtml(index < 4 ? t("criteriaDescA") : t("criteriaDescB"))}</p></article>`).join("");
+}
+function renderEmpty() { const box = document.getElementById("resultBox"); if (box) box.innerHTML = `<div class="empty-state"><strong>${escapeHtml(t("emptyTitle"))}</strong><p>${escapeHtml(t("emptyText"))}</p></div>`; }
+function makeApplicationId() { const d = new Date(); const y = d.getFullYear(); const m = String(d.getMonth() + 1).padStart(2, "0"); const day = String(d.getDate()).padStart(2, "0"); return `BUFS-${y}${m}${day}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`; }
 function getFormData() {
   return {
-    target: document.getElementById("target").value,
+    teamName: document.getElementById("teamName").value,
+    leaderName: document.getElementById("leaderName").value,
+    department: document.getElementById("department").value,
+    email: document.getElementById("email").value,
+    category: document.getElementById("category").value,
+    categoryLabel: t("categoryOptions")[document.getElementById("category").value],
     problem: document.getElementById("problem").value,
+    targetUser: document.getElementById("targetUser").value,
+    currentLimit: document.getElementById("currentLimit").value,
+    roughIdea: document.getElementById("roughIdea").value,
     strength: document.getElementById("strength").value,
-    tool: document.getElementById("tool").value,
-    language: languageMeta[lang()].prompt,
-    languageCode: lang()
+    strengthLabel: t("strengthOptions")[document.getElementById("strength").value],
+    mvpTool: document.getElementById("mvpTool").value,
+    mvpToolLabel: t("mvpOptions")[document.getElementById("mvpTool").value],
+    supportNeed: document.getElementById("supportNeed").value,
+    supportNeedLabel: t("supportOptions")[document.getElementById("supportNeed").value],
+    language: languageMeta[currentLang].prompt,
+    languageCode: currentLang,
+    createdAt: new Date().toISOString(),
+    applicationId: makeApplicationId()
   };
 }
-function getMvpSteps() { return mvpStepsByLang[lang()] || mvpStepsByLang.ko; }
-function getSampleQuestions(target) { return (sampleQuestionsByTarget[target] && sampleQuestionsByTarget[target][lang()]) || sampleQuestionsByTarget[target]?.ko || sampleQuestionsByTarget.foreignStudent[lang()] || sampleQuestionsByTarget.foreignStudent.ko; }
-function getCautions(target) {
-  const list = [...((cautionText.base && cautionText.base[lang()]) || cautionText.base.ko)];
-  if (["medicalTourist", "hospitalVisitor", "kBeautyCustomer"].includes(target)) list.push(cautionText.medical[lang()] || cautionText.medical.ko);
-  return list;
-}
-function getRights(tool, target, name) {
-  const list = [
-    { type: t("right1Title"), desc: format(rightsText.trademark[lang()] || rightsText.trademark.ko, { name }) },
-    { type: t("right2Title"), desc: rightsText.copyright[lang()] || rightsText.copyright.ko }
-  ];
-  if (["chatbot", "webapp", "form", "map"].includes(tool)) list.push({ type: t("right5Title"), desc: rightsText.patent[lang()] || rightsText.patent.ko });
-  if (["medicalTourist", "hospitalVisitor"].includes(target)) list.push({ type: t("apiNote").includes("API") ? (lang()==="ko" ? "주의" : lang()==="en" ? "Caution" : lang()==="vi" ? "Lưu ý" : lang()==="ja" ? "注意" : lang()==="zh" ? "注意" : "تنبيه") : "주의", desc: rightsText.notice[lang()] || rightsText.notice.ko });
-  return list;
-}
-function makeFallbackResult(data) {
-  const target = targets[data.target];
-  const selectedName = target.names[0];
-  const problem = (data.problem || "").trim() || localized(target.pain);
-  const targetLabel = localized(target.pitchTarget);
-  const toolLabel = localized(tools[data.tool]);
-  const strengthLabel = localized(strengths[data.strength]);
+async function askAi(data) { const res = await fetch("/.netlify/functions/generate-ideas", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }); const out = await res.json(); if (!res.ok || out.error) throw new Error(out.error || "AI error"); return out; }
+
+function fallback(data) {
+  const f = t("fallback");
+  const categoryLabel = data.categoryLabel || t("categoryOptions")[data.category] || "";
+  const base = data.problem || f.problem;
   return {
-    ideaName: selectedName,
-    oneLine: format(oneLineTemplate[lang()] || oneLineTemplate.ko, { target: targetLabel, tool: toolLabel }),
-    problemSummary: problem,
-    targetUser: targetLabel,
-    solution: format(solutionTemplate[lang()] || solutionTemplate.ko, { strength: strengthLabel }),
-    mvpPlan: getMvpSteps(),
-    sampleQuestions: getSampleQuestions(data.target),
-    rights: getRights(data.tool, data.target, selectedName),
-    cautions: getCautions(data.target),
-    pitch30: format(pitchTemplate[lang()] || pitchTemplate.ko, { target: targetLabel, problem, tool: toolLabel }),
-    nextAction: nextActionText[lang()] || nextActionText.ko
+    applicationId: data.applicationId,
+    problemSummary: base,
+    recommendedRank: 1,
+    recommendReason: f.recommend,
+    mentoringQuestions: f.mentoringQuestions,
+    nextSupportTrack: [t("supportOptions").mentoring, t("supportOptions").funding, t("supportOptions").ip, t("supportOptions").space],
+    ideas: f.names.map((name, index) => ({
+      rank: index + 1,
+      ideaName: index === 0 ? `${categoryLabel} Bridge AI` : name,
+      oneLine: f.oneLine,
+      targetUser: data.targetUser || f.target,
+      solution: `${data.strengthLabel || ""} · ${data.mvpToolLabel || ""}: ${f.solution}`,
+      score: 88 - index * 5,
+      difficulty: f.difficulty[index] || f.difficulty[0],
+      mvpType: data.mvpToolLabel || t("mvp"),
+      mvpPlan: f.mvpPlan,
+      fourWeekPlan: f.fourWeekPlan,
+      interviewQuestions: f.interviewQuestions,
+      teamRoles: f.teamRoles,
+      revenueModel: f.revenueModel,
+      ipDirection: f.ipDirection,
+      risks: f.risks,
+      whyRecommended: index === 0 ? f.whyRecommended : f.recommend
+    }))
   };
 }
-function renderResult(item, isFallback = false) {
-  const h = t("resultHeads");
-  const safe = (value) => escapeHtml(value || t("notProvided"));
-  const list = arr => Array.isArray(arr) && arr.length ? `<ul>${arr.map(v => `<li>${safe(v)}</li>`).join("")}</ul>` : `<p>${escapeHtml(t("notProvided"))}</p>`;
-  const rights = Array.isArray(item.rights) && item.rights.length ? `<ul>${item.rights.map(v => `<li><strong>${safe(v.type)}</strong>: ${safe(v.desc)}</li>`).join("")}</ul>` : `<p>${escapeHtml(t("notProvided"))}</p>`;
-  return `${isFallback ? `<div class="fallback-note">${escapeHtml(t("fallbackNote"))}</div>` : `<div class="ai-badge">${escapeHtml(t("aiNote"))}</div>`}
-    <div class="result-section"><h4>${safe(h[0])}</h4><p><strong>${safe(item.ideaName)}</strong></p></div>
-    <div class="result-section"><h4>${safe(h[1])}</h4><p>${safe(item.oneLine)}</p></div>
-    <div class="result-section"><h4>${safe(h[2])}</h4><p>${safe(item.problemSummary)}</p></div>
-    <div class="result-section"><h4>${safe(h[3])}</h4><p><strong>${escapeHtml(t("targetPrefix"))}:</strong> ${safe(item.targetUser)}</p><p><strong>${escapeHtml(t("solutionPrefix"))}:</strong> ${safe(item.solution)}</p></div>
-    <div class="result-section"><h4>${safe(h[4])}</h4>${list(item.mvpPlan)}</div>
-    <div class="result-section"><h4>${safe(h[5])}</h4>${list(item.sampleQuestions)}</div>
-    <div class="result-section"><h4>${safe(h[6])}</h4>${rights}</div>
-    <div class="result-section"><h4>${safe(h[7])}</h4>${list(item.cautions)}</div>
-    <div class="result-section"><h4>${safe(h[8])}</h4><p>${safe(item.pitch30)}</p></div>
-    <div class="result-section"><h4>${safe(h[9])}</h4><p>${safe(item.nextAction)}</p></div>`;
+
+function renderResult(result, isFallback = false) {
+  lastResult = result;
+  selectedIdea = result.ideas?.[0] || null;
+  const ideas = (result.ideas || []).map(idea => renderIdea(idea, result.recommendedRank)).join("");
+  const html = `
+    <div class="print-header"><h1>BUFS Startup Bridge AI v2</h1></div>
+    ${isFallback ? `<div class="fallback-note">${escapeHtml(t("fallbackNote"))}</div>` : `<div class="ai-badge">${escapeHtml(t("aiNote"))}</div>`}
+    <div class="summary-card">
+      <p><strong>${escapeHtml(t("regNo"))}:</strong> ${escapeHtml(result.applicationId || lastForm?.applicationId || "")}</p>
+      <p><strong>${escapeHtml(t("problemShort"))}:</strong> ${escapeHtml(result.problemSummary || "")}</p>
+      <p><strong>${escapeHtml(t("recommended"))}:</strong> #${escapeHtml(result.recommendedRank || 1)} · ${escapeHtml(result.recommendReason || "")}</p>
+    </div>
+    ${ideas}
+    <div id="selectedDetail">${selectedIdea ? renderDetail(selectedIdea) : ""}</div>
+    <div class="submission-tools">
+      <button class="btn soft" onclick="submitEmail()">${escapeHtml(t("mailBtn"))}</button>
+      <button class="btn ghost" onclick="createIdeaLink()">${escapeHtml(t("linkBtn"))}</button>
+      <button class="btn ghost" onclick="copyResult()">${escapeHtml(t("copyBtn"))}</button>
+    </div>`;
+  document.getElementById("resultBox").innerHTML = html;
 }
-async function askAi(data) {
-  const response = await fetch("/.netlify/functions/generate-idea", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      target: localized(targets[data.target].pitchTarget),
-      problem: data.problem,
-      strength: localized(strengths[data.strength]),
-      mvpTool: localized(tools[data.tool]),
-      language: data.language,
-      languageCode: data.languageCode,
-      context: "BUFS student startup practice app. Return all JSON values in the selected language."
-    })
-  });
-  const result = await response.json();
-  if (!response.ok || result.error) throw new Error(result.error || "AI connection failed");
-  return result;
+function renderIdea(idea, recommendedRank) {
+  const risk = (idea.risks || []).slice(0, 1).join(" ");
+  const isRecommended = idea.rank === recommendedRank;
+  return `<article class="idea-card ${isRecommended ? "recommended" : ""}">
+    <div class="idea-head"><div><h4>${idea.rank}. ${escapeHtml(idea.ideaName)}</h4><p>${escapeHtml(idea.oneLine)}</p></div><div class="score"><small>${escapeHtml(t("score"))}</small>${escapeHtml(idea.score)}</div></div>
+    <div class="chips"><span class="chip ${isRecommended ? "yellow" : ""}">${escapeHtml(isRecommended ? t("recommended") : t("option"))}</span><span class="chip green">${escapeHtml(t("difficulty"))}: ${escapeHtml(idea.difficulty)}</span><span class="chip">${escapeHtml(t("mvp"))}: ${escapeHtml(idea.mvpType)}</span></div>
+    <p><strong>${escapeHtml(t("revenue"))}:</strong> ${escapeHtml((idea.revenueModel || []).slice(0, 2).join(", "))}</p>
+    <p><strong>${escapeHtml(t("risk"))}:</strong> ${escapeHtml(risk)}</p>
+    <div class="idea-actions"><button class="mini-btn primary" onclick="selectIdea(${idea.rank})">${escapeHtml(t("selectIdea"))}</button></div>
+  </article>`;
 }
-function renderTemplates() {
-  const wrap = document.getElementById("templateCards");
-  if (!wrap) return;
-  wrap.innerHTML = topIdeas.map((idea, i) => `<article class="example-card" tabindex="0" role="button" data-index="${i}" aria-label="${escapeHtml(localized(idea.title))}"><div class="rank">${i+1}</div><h3>${escapeHtml(localized(idea.title))}</h3><p>${escapeHtml(localized(idea.why))}</p></article>`).join("");
-  wrap.querySelectorAll(".example-card").forEach(card => {
-    const load = () => {
-      const item = topIdeas[Number(card.dataset.index)];
-      document.getElementById("target").value = item.target;
-      document.getElementById("problem").value = item.problem;
-      document.getElementById("strength").value = item.strength;
-      document.getElementById("tool").value = item.tool;
-      document.getElementById("idea-builder").scrollIntoView({behavior:"smooth"});
-    };
-    card.addEventListener("click", load);
-    card.addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " ") { e.preventDefault(); load(); } });
-  });
+function renderDetail(idea) {
+  return `<div class="detail-card"><h3>${escapeHtml(t("selectedTitle"))}: ${escapeHtml(idea.ideaName)}</h3><p>${escapeHtml(idea.solution || "")}</p><div class="detail-grid">
+    <div class="detail-block"><h4>${escapeHtml(t("sevenDayMvp"))}</h4><ul>${(idea.mvpPlan || []).map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul></div>
+    <div class="detail-block"><h4>${escapeHtml(t("fourWeekPlan"))}</h4><ul>${(idea.fourWeekPlan || []).map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul></div>
+    <div class="detail-block"><h4>${escapeHtml(t("interview"))}</h4><ul>${(idea.interviewQuestions || []).map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul></div>
+    <div class="detail-block"><h4>${escapeHtml(t("ip"))}</h4><ul>${(idea.ipDirection || []).map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul></div>
+  </div></div>`;
 }
-let lastText = "";
-document.addEventListener("click", e => { const btn = e.target.closest(".lang-btn"); if (btn) applyLanguage(btn.dataset.lang); });
-document.getElementById("ideaForm").addEventListener("submit", async e => {
-  e.preventDefault();
+window.selectIdea = function(rank) { selectedIdea = (lastResult.ideas || []).find(item => item.rank === rank) || selectedIdea; document.getElementById("selectedDetail").innerHTML = renderDetail(selectedIdea); document.getElementById("selectedDetail").scrollIntoView({ behavior: "smooth", block: "start" }); };
+function resultText() {
+  const box = document.getElementById("resultBox");
+  if (!box) return "";
+  const clone = box.cloneNode(true);
+  clone.querySelectorAll(".submission-tools,.print-header,button").forEach(el => el.remove());
+  return clone.innerText.trim();
+}
+window.copyResult = async function() { try { await navigator.clipboard.writeText(resultText()); alert(t("copied")); } catch { alert(t("copyFail")); } };
+window.submitEmail = function() {
+  if (!lastResult) { alert(t("mailNeedResult")); return; }
+  const data = lastForm || {};
+  const subject = encodeURIComponent(`${t("mailSubject")} - ${data.teamName || ""}`);
+  const body = encodeURIComponent(`${t("applicationEmailGreeting")}\n${t("applicationEmailIntro")}\n\n${t("teamShort")}: ${data.teamName || ""}\n${t("leaderLabel")}: ${data.leaderName || ""}\n${t("departmentLabel")}: ${data.department || ""}\n${t("emailLabel")}: ${data.email || ""}\n${t("regNo")}: ${(lastResult && lastResult.applicationId) || data.applicationId || ""}\n${t("selectedIdeaLabel")}: ${(selectedIdea && selectedIdea.ideaName) || ""}\n\n--- ${t("aiDiagnosis")} ---\n${resultText()}`);
+  location.href = `mailto:${t("mailTo")}?subject=${subject}&body=${body}`;
+};
+function encodeData(obj) { return btoa(unescape(encodeURIComponent(JSON.stringify(obj)))); }
+function decodeData(str) { return JSON.parse(decodeURIComponent(escape(atob(str)))); }
+window.createIdeaLink = function() { if (!lastResult) return; const compact = { form: lastForm, result: lastResult, selected: selectedIdea, lang: currentLang }; const url = `${location.origin}${location.pathname}#portfolio=${encodeData(compact)}`; navigator.clipboard.writeText(url); alert(`${t("linkMade")}\n${url}`); };
+function renderPortfolio(payload) {
+  document.body.classList.add("portfolio-only");
+  currentLang = payload.lang || currentLang;
+  const f = payload.form || {}, r = payload.result || {}, idea = payload.selected || r.ideas?.[0] || {};
+  applyLanguage(currentLang);
+  document.querySelector("main").innerHTML = `<section class="portfolio-view"><div class="portfolio-card"><p class="section-label">${escapeHtml(t("portfolioTitle"))}</p><h1>${escapeHtml(idea.ideaName || "Idea")}</h1><p><strong>${escapeHtml(t("regNo"))}:</strong> ${escapeHtml(r.applicationId || f.applicationId || "")}</p><p><strong>${escapeHtml(t("teamShort"))}:</strong> ${escapeHtml(f.teamName || "")} / ${escapeHtml(f.leaderName || "")}</p><p><strong>${escapeHtml(t("categoryShort"))}:</strong> ${escapeHtml(f.categoryLabel || "")}</p><p><strong>${escapeHtml(t("problemShort"))}:</strong> ${escapeHtml(r.problemSummary || f.problem || "")}</p><p><strong>${escapeHtml(t("solutionShort"))}:</strong> ${escapeHtml(idea.solution || "")}</p><p><strong>${escapeHtml(t("score"))}:</strong> ${escapeHtml(idea.score || "")}</p>${renderDetail(idea)}<p><a class="btn primary" href="${location.pathname}">${escapeHtml(t("backHome"))}</a></p></div></section>`;
+}
+
+document.getElementById("ideaForm").addEventListener("submit", async event => {
+  event.preventDefault();
   const data = getFormData();
-  const resultBox = document.getElementById("resultBox");
-  resultBox.dataset.hasResult = "true";
-  resultBox.innerHTML = `<div class="empty-state"><strong>${escapeHtml(t("loadingTitle"))}</strong><p>${escapeHtml(t("loadingText"))}</p></div>`;
-  try {
-    const aiResult = await askAi(data);
-    resultBox.innerHTML = renderResult(aiResult, false);
-    lastText = resultBox.innerText;
-  } catch (err) {
-    const fallback = makeFallbackResult(data);
-    resultBox.innerHTML = renderResult(fallback, true);
-    lastText = resultBox.innerText;
-  }
+  lastForm = data;
+  document.getElementById("resultBox").innerHTML = `<div class="empty-state"><strong>${escapeHtml(t("loadingTitle"))}</strong><p>${escapeHtml(t("loadingText"))}</p></div>`;
+  try { const ai = await askAi(data); ai.applicationId = ai.applicationId || data.applicationId; renderResult(ai, false); } catch (error) { renderResult(fallback(data), true); }
 });
-document.getElementById("copyBtn").addEventListener("click", async () => {
-  const text = lastText || document.getElementById("resultBox").innerText;
-  try { await navigator.clipboard.writeText(text); alert(t("copied")); } catch { alert(t("copyFail")); }
-});
+document.getElementById("mailSubmitBtn").addEventListener("click", () => submitEmail());
+document.getElementById("resetBtn").addEventListener("click", () => { document.getElementById("ideaForm").reset(); lastResult = null; lastForm = null; selectedIdea = null; renderEmpty(); });
+document.addEventListener("click", event => { const button = event.target.closest(".lang-btn"); if (button) applyLanguage(button.dataset.lang); });
 
-const RESULT_EMAIL_TO = "hotissue0@bufs.ac.kr";
-function makeEmailBody(text) {
-  const clean = String(text || "").trim();
-  const maxLength = 5500;
-  const clipped = clean.length > maxLength
-    ? clean.slice(0, maxLength) + "\n\n[The content is long, so part of it was inserted into the email body. The full result has been copied to the clipboard.]"
-    : clean;
-  return `${t("emailIntro")}\n\n${clipped}\n\n---\nBUFS Startup Idea Builder AI\nhttps://bufs-startup-ai-app.netlify.app/`;
+if (location.hash.startsWith("#portfolio=")) {
+  try { renderPortfolio(decodeData(location.hash.replace("#portfolio=", ""))); } catch (error) { applyLanguage(currentLang); }
+} else {
+  applyLanguage(currentLang);
 }
-
-document.getElementById("emailBtn").addEventListener("click", async () => {
-  const resultBox = document.getElementById("resultBox");
-  const text = (lastText || resultBox.innerText || "").trim();
-  if (!text || resultBox.dataset.hasResult !== "true") {
-    alert(t("emailNoResult"));
-    return;
-  }
-  try { await navigator.clipboard.writeText(text); } catch {}
-  const subject = encodeURIComponent(t("emailSubject"));
-  const body = encodeURIComponent(makeEmailBody(text));
-  window.location.href = `mailto:${RESULT_EMAIL_TO}?subject=${subject}&body=${body}`;
-  setTimeout(() => alert(t("emailCopied")), 300);
-});
-
-document.getElementById("resetBtn").addEventListener("click", () => {
-  document.getElementById("ideaForm").reset();
-  document.getElementById("problem").value = "";
-  document.getElementById("resultBox").dataset.hasResult = "false";
-  renderEmpty(true);
-  lastText = "";
-});
-applyLanguage(currentLang);
